@@ -3,6 +3,15 @@ export * from './OllamaBrainLLMProvider';
 export * from './NeuroEngine';
 export * from './NeuroBrainEngineRouter';
 export * from './NeuroBrainAgent';
+export * from './NeuroBrainBackend';
+export * from './BrainDecisionTree';
+export * from './neural/NeuralNetwork';
+export * from './neural/defaultBrainNetworks';
+export * from './neural/BrainSegments';
+export * from './personality/PersonalityContracts';
+export * from './personality/PersonalityRegistry';
+export * from './personality/defaultPersonalities';
+export * from './NeuroBrainArchitectureControlCenter';
 
 import{brainLLM}from'./BrainLLM';
 import{OllamaBrainLLMProvider}from'./OllamaBrainLLMProvider';
