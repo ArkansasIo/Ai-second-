@@ -12,19 +12,11 @@ AI-native development and knowledge environment combining persistent project mem
 
 **Brain LLM** is the canonical application-level AI/LLM engine. Ollama is the default local inference backend used by Brain LLM.
 
-```text
-AI Second Brain
-      |
-      v
-  Brain LLM
-      |
-      +--> Ollama local backend
-      +--> External model providers
-      +--> Agent workforce
-      +--> Memory
-      +--> Search / Math tools
-      +--> BrainScript
-```
+New AI integrations should target `BrainLLM`/`brainLLM` rather than directly coupling to Ollama.
+
+## API
+
+New AI routes use `/api/brain-llm/*`. Existing `/api/ollama/*` routes remain compatibility aliases.
 
 ## Current Foundation
 
@@ -39,10 +31,6 @@ AI Second Brain
 - Responsive desktop, tablet, and mobile layout
 - GitHub Pages deployment workflow
 - Release/version metadata and licensing policy records
-
-## API
-
-New AI routes use `/api/brain-llm/*`. Existing `/api/ollama/*` routes remain compatibility aliases.
 
 ## Repository Layout
 
