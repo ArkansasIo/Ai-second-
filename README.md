@@ -3,7 +3,7 @@
 **Professional Edition — Prototype**
 
 Developer: ArkansasIo
-Version: 0.1.0
+Version: 0.1.1
 Year: 2026
 
 AI-native development and knowledge environment combining persistent project memory, AI agent teams, UML/Blueprint design, documentation, source code, Git/GitHub integration, and offline/local operation.
@@ -34,7 +34,7 @@ AI-native development and knowledge environment combining persistent project mem
 ```text
 apps/        Application frontends and integrations
 packages/    Shared core services
- database/   Database schema and migrations
+database/    Database schema and migrations
 docs/        Product and developer documentation
 uml/         UML and architecture sources
 tests/       Automated tests
