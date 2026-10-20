@@ -1,4 +1,4 @@
-import {binderStore, type BinderPage} from './BinderStore';
+import {binderStore} from './BinderStore';
 import {BinderDocumentRepository, type BinderDocumentRecord} from './BinderDocumentRepository';
 import {BinderRevisionStore} from './BinderRevisionStore';
 
@@ -9,7 +9,7 @@ export class BinderDocumentService {
   ) {}
 
   sync(): void {
-    documentsSeed(this.documents, binderStore.snapshot());
+    for (const page of binderStore.snapshot().pages) this.documents.ensurePage(page);
   }
 
   open(pageId: string): BinderDocumentRecord {
@@ -24,16 +24,12 @@ export class BinderDocumentService {
     if (page.status === 'frozen' && patch.content !== undefined) throw new Error('Binder page is frozen');
     const current = this.open(pageId);
     const next = this.documents.upsert(pageId, patch);
-    this.revisions.record(pageId, current.content, next.content);
+    if (patch.content !== undefined && patch.content !== current.content) this.revisions.commit(pageId, patch.content, 'local-user', 'Update binder document');
     binderStore.updatePage(pageId, {title: next.title, content: next.content, tags: next.tags});
     return next;
   }
 
   search(query: string): BinderDocumentRecord[] { return this.documents.search(query); }
-}
-
-function documentsSeed(repository: BinderDocumentRepository, workspace: ReturnType<typeof binderStore.snapshot>): void {
-  for (const page of workspace.pages) repository.ensurePage(page as BinderPage);
 }
 
 export const binderDocumentService = new BinderDocumentService();
