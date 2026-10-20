@@ -6,7 +6,7 @@
 - Short name: **Second Brain**
 - Developer: **ArkansasIo**
 - Edition: **Professional**
-- Current version: **0.1.0**
+- Current version: **0.1.1**
 - Release year: **2026**
 - License: **TBD**
 - Default mode: **Local / Offline-first**
@@ -26,7 +26,7 @@
 │                                             │
 │       LOCAL AI • DEV • CREATIVE             │
 │                                             │
-│                 v0.1.0                      │
+│                 v0.1.1                      │
 │              Professional                   │
 │                                             │
 │             ArkansasIo  •  2026             │
