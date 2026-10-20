@@ -1,0 +1,28 @@
+{
+  "product": "AI Second Brain",
+  "developer": "ArkansasIo",
+  "edition": "Professional",
+  "version": "0.1.0-alpha",
+  "channel": "alpha",
+  "platforms": ["browser", "windows", "macos", "linux", "android", "ios", "ipados", "raspberry-pi"],
+  "browserPackage": "github-pages",
+  "defaultAiProvider": "ollama-local",
+  "apiPort": 8787,
+  "ollamaPort": 11434,
+  "localFirst": true,
+  "cloudSyncDefault": false,
+  "remoteModelsDefault": false,
+  "telemetryDefault": false,
+  "artifacts": [
+    {"type":"web", "status":"ci-build"},
+    {"type":"source", "status":"available"},
+    {"type":"windows-installer", "status":"planned"},
+    {"type":"macos-package", "status":"planned"},
+    {"type":"linux-package", "status":"planned"},
+    {"type":"android-apk", "status":"planned"},
+    {"type":"android-aab", "status":"planned"},
+    {"type":"ios-ipa", "status":"planned"},
+    {"type":"ipados-ipa", "status":"planned"},
+    {"type":"raspberry-pi", "status":"planned"}
+  ]
+}
