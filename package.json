@@ -1,6 +1,6 @@
 {
   "name": "ai-second-brain",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "private": true,
   "description": "AI Binder local-first application with Brain LLM and modular BrainScript orchestration",
   "main": "electron/main.cjs",
