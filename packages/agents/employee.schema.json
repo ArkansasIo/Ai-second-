@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-second-brain.local/schemas/employee.schema.json",
+  "title": "AI Second Brain Employee",
+  "type": "object",
+  "required": ["id", "name", "title", "department", "status", "skills", "model", "permissions"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^EMP-[0-9]{5}$"},
+    "name": {"type": "string", "minLength": 1},
+    "title": {"type": "string"},
+    "department": {"type": "string"},
+    "status": {"enum": ["applicant", "hired", "active", "paused", "leave", "terminated"]},
+    "skills": {"type": "array", "items": {"type": "string"}},
+    "languages": {"type": "array", "items": {"type": "string"}},
+    "model": {"type": "string"},
+    "voicePreset": {"type": ["string", "null"]},
+    "personality": {"type": "string"},
+    "permissions": {"type": "array", "items": {"type": "string"}},
+    "capacity": {"type": "number", "minimum": 0, "maximum": 1},
+    "workshopId": {"type": ["string", "null"]},
+    "clusterId": {"type": ["string", "null"]},
+    "managerId": {"type": ["string", "null"]},
+    "performance": {
+      "type": "object",
+      "properties": {
+        "tasksCompleted": {"type": "integer", "minimum": 0},
+        "tasksFailed": {"type": "integer", "minimum": 0},
+        "averageLatencyMs": {"type": "number", "minimum": 0},
+        "qualityScore": {"type": "number", "minimum": 0, "maximum": 100}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
