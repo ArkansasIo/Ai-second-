@@ -1,0 +1,23 @@
+{
+  "enabled": true,
+  "baseUrl": "http://127.0.0.1:11434",
+  "mode": "full-local",
+  "autoDetect": true,
+  "autoPullModels": false,
+  "streaming": true,
+  "timeoutMs": 120000,
+  "maxParallelAgents": 12,
+  "maxQueuedTasks": 256,
+  "resourcePolicy": {
+    "minFreeRamPercent": 15,
+    "maxGpuUtilizationPercent": 92,
+    "maxVramUtilizationPercent": 92,
+    "maxCpuUtilizationPercent": 90,
+    "throttleWhenSwap": true
+  },
+  "fallbackProvider": "none",
+  "privacy": {
+    "allowRemoteModels": false,
+    "requireExplicitRemoteApproval": true
+  }
+}
