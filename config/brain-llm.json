@@ -1,0 +1,17 @@
+{
+  "name": "Brain LLM",
+  "id": "brain-llm",
+  "role": "primary-ai-engine",
+  "version": "0.1.8",
+  "defaultProvider": "ollama",
+  "backend": {
+    "type": "ollama-compatible",
+    "baseUrl": "http://127.0.0.1:11434"
+  },
+  "providers": ["ollama", "external-api", "future-local-runtime"],
+  "capabilities": ["chat", "reasoning", "agent-orchestration", "tool-use", "memory", "coding", "research", "math", "search"],
+  "compatibility": {
+    "legacyOllamaEndpoints": true,
+    "legacyAiNaming": "compatibility-only"
+  }
+}
