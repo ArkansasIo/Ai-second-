@@ -3,7 +3,7 @@
 **Professional Edition — Prototype**
 
 Developer: ArkansasIo  
-Version: 0.1.8  
+Version: 0.1.9  
 Year: 2026
 
 AI-native development and knowledge environment combining persistent project memory, AI agent teams, UML/Blueprint design, documentation, source code, Git/GitHub integration, and offline/local operation.
@@ -12,7 +12,7 @@ AI-native development and knowledge environment combining persistent project mem
 
 **Brain LLM** is the canonical application-level AI/LLM engine. Ollama is the default local inference backend used by Brain LLM.
 
-New AI integrations should target `BrainLLM`/`brainLLM` rather than directly coupling to Ollama.
+New AI integrations should target `BrainLLM`/`brainLLM` rather than directly coupling to Ollama. Agent execution should use `BrainLLMAgentRuntime` so agent roles, system prompts, and tool declarations stay above the provider layer.
 
 ## API
 
@@ -25,6 +25,7 @@ New AI routes use `/api/brain-llm/*`. Existing `/api/ollama/*` routes remain com
 - BrainScript OOP language contracts and compiler foundation
 - Brain LLM primary AI engine
 - Ollama provider adapter
+- Brain LLM agent runtime bridge
 - Agent/tool/work scheduler
 - Search and math provider systems
 - Persistent workspace storage
