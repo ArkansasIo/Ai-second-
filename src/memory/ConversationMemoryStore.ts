@@ -1,0 +1,5 @@
+export type MemoryRole='system'|'user'|'assistant'|'tool';
+export interface MemoryMessage{id:string;role:MemoryRole;content:string;createdAt:string;workspaceId?:string;projectId?:string;agentId?:string;}
+const KEY='ai-second-brain.conversation-memory.v1';
+export class ConversationMemoryStore{private messages:MemoryMessage[]=[];private loaded=false;load(){if(this.loaded)return;try{const raw=localStorage.getItem(KEY);if(raw)this.messages=JSON.parse(raw) as MemoryMessage[];}catch{this.messages=[]}this.loaded=true;}private save(){localStorage.setItem(KEY,JSON.stringify(this.messages.slice(-1000)));}append(message:Omit<MemoryMessage,'id'|'createdAt'>){this.load();const item={...message,id:crypto.randomUUID(),createdAt:new Date().toISOString()};this.messages.push(item);this.save();return item;}list(limit=100){this.load();return this.messages.slice(-limit);}search(query:string){this.load();const q=query.toLowerCase();return this.messages.filter(m=>m.content.toLowerCase().includes(q));}clear(){this.messages=[];this.loaded=true;localStorage.removeItem(KEY);}}
+export const conversationMemory=new ConversationMemoryStore();
