@@ -1,0 +1,32 @@
+@startuml
+class Agent {
+  +id: string
+  +name: string
+  +role: string
+  +baseModel: string
+  +systemPrompt: string
+  +temperature: double
+}
+class AgentCluster {
+  +id: string
+  +name: string
+  +goal: string
+  +status: ClusterStatus
+  +maxParallelism: int
+}
+class ClusterNode {
+  +id: string
+  +branch: string
+  +status: NodeStatus
+  +taskId: string
+}
+class Task {
+  +id: string
+  +description: string
+  +status: TaskStatus
+}
+AgentCluster "1" o-- "*" ClusterNode
+ClusterNode "*" --> "1" Agent
+ClusterNode "*" --> "0..1" Task
+ClusterNode "0..1" --> "0..1" ClusterNode : parent
+@enduml
