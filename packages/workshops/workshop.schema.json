@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Second Brain Workshop",
+  "type": "object",
+  "required": ["id", "name", "projectId", "clusterId", "platform", "workspace"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^WORKSHOP-[0-9]{5}$"},
+    "name": {"type": "string", "minLength": 1},
+    "projectId": {"type": "string"},
+    "clusterId": {"type": "string"},
+    "platform": {"type": "string", "enum": ["windows", "macos", "linux", "android", "ios", "ipados", "raspberry-pi", "browser"]},
+    "workspace": {"type": "string"},
+    "repository": {"type": "string"},
+    "branch": {"type": "string"},
+    "environmentId": {"type": "string"},
+    "modelId": {"type": "string"},
+    "voiceId": {"type": "string"},
+    "pinned": {"type": "boolean", "default": false},
+    "splitView": {"type": "boolean", "default": false},
+    "restoreOnStartup": {"type": "boolean", "default": true}
+  }
+}
