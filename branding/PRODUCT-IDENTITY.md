@@ -4,18 +4,23 @@
 
 - Product name: **AI Second Brain**
 - Short name: **Second Brain**
+- Main AI engine: **Brain LLM**
 - Developer: **ArkansasIo**
 - Edition: **Professional**
-- Current version: **0.1.1**
+- Current version: **0.1.8**
 - Release year: **2026**
 - License: **TBD**
 - Default mode: **Local / Offline-first**
-- Default AI provider: **Ollama (local)**
+- Default Brain LLM provider: **Ollama (local)**
 - Cloud services: **Optional**
 
 ## Tagline
 
 **Your local AI development and creative workstation.**
+
+## Brain LLM identity
+
+Brain LLM is the application-level intelligence layer. It owns model routing, conversation, agent orchestration, memory/tool access, provenance, and provider selection. Ollama is a backend/provider and is not the name of the application's main AI.
 
 ## Bootloader display
 
@@ -24,9 +29,10 @@
 │                                             │
 │              AI SECOND BRAIN                │
 │                                             │
+│                BRAIN LLM                   │
 │       LOCAL AI • DEV • CREATIVE             │
 │                                             │
-│                 v0.1.1                      │
+│                 v0.1.8                      │
 │              Professional                   │
 │                                             │
 │             ArkansasIo  •  2026             │
@@ -38,27 +44,11 @@
 
 ## Product principles
 
-1. Free core software.
+1. Brain LLM is the primary AI engine.
 2. Local-first data ownership.
-3. Ollama-first local AI.
-4. Optional external AI APIs.
+3. Ollama-first local inference backend.
+4. Optional external AI providers.
 5. Explicit permissions for destructive or remote actions.
 6. Cross-platform shared core.
 7. Modular agents, clusters, environments, and plugins.
 8. Reproducible releases with version and update metadata.
-
-## Logo direction
-
-The primary logo should combine a stylized **brain / neural network** motif with a **second-brain knowledge node** concept. It should remain legible at bootloader, application-icon, favicon, GitHub, installer, and mobile sizes.
-
-Recommended asset set:
-
-- `logo.svg` — scalable primary mark
-- `logo-horizontal.svg` — mark + wordmark
-- `logo-monochrome.svg` — one-color variant
-- `icon.svg` — application icon source
-- `favicon.svg` — browser icon source
-- `wordmark.svg` — text-only wordmark
-- PNG exports for installer and mobile packaging
-
-The visual system should use the application's white Professional Edition interface: clean neutral surfaces, dark charcoal typography, and professional blue accents.
