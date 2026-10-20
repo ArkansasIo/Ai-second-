@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aisecondbrain.local/schemas/virtual-environment.json",
+  "title": "AI Second Brain Virtual Environment",
+  "type": "object",
+  "required": ["id", "name", "platform", "toolchain", "workspace", "capabilities"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "platform": { "enum": ["windows", "macos", "linux", "android", "ios", "ipados", "raspberry-pi", "browser"] },
+    "hostRequirements": { "type": "array", "items": { "type": "string" } },
+    "toolchain": {
+      "type": "object",
+      "required": ["languages"],
+      "properties": {
+        "languages": { "type": "array", "items": { "type": "string" } },
+        "sdk": { "type": "string" },
+        "compiler": { "type": "string" },
+        "buildSystem": { "type": "string" },
+        "engine": { "type": "string" }
+      }
+    },
+    "workspace": { "type": "string" },
+    "git": {
+      "type": "object",
+      "properties": {
+        "repository": { "type": "string" },
+        "branch": { "type": "string" },
+        "worktree": { "type": "string" }
+      }
+    },
+    "capabilities": { "type": "array", "items": { "type": "string" } },
+    "resourcePolicy": {
+      "type": "object",
+      "properties": {
+        "maxCpuPercent": { "type": "number" },
+        "maxRamPercent": { "type": "number" },
+        "maxGpuPercent": { "type": "number" },
+        "maxParallelTasks": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "agents": { "type": "array", "items": { "type": "string" } }
+  }
+}
