@@ -1,0 +1,21 @@
+appId: com.arkansasio.ai-second-brain
+productName: AI Second Brain
+artifactName: AI-Second-Brain-${version}-${os}-${arch}.${ext}
+files:
+  - dist/**
+  - electron/**
+win:
+  target:
+    - nsis
+    - portable
+  executableName: AI-Second-Brain
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+mac:
+  target:
+    - dmg
+linux:
+  target:
+    - AppImage
