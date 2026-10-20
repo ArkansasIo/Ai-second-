@@ -7,7 +7,7 @@ import './styles.css';
 type Workshop = { id: string; name: string; environment: string; agents: number };
 type BrowserTab = { id: string; title: string; url: string; icon: string };
 type UpdateInfo = { channel: string; version: string; status: 'current' | 'available' | 'error'; message: string };
-const APP_VERSION = '0.1.1';
+const APP_VERSION = '0.1.11';
 const workshops: Workshop[] = [
   { id: 'WORKSHOP-00001', name: 'C++ Core', environment: 'C++', agents: 4 },
   { id: 'WORKSHOP-00002', name: 'Android App', environment: 'Android', agents: 6 },
