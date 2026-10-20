@@ -1,4 +1,4 @@
-# AI Second Brain
+# AI Second Brain Binder
 
 **Professional Edition — Prototype**
 
