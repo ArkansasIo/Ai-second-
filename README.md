@@ -2,48 +2,54 @@
 
 **Professional Edition — Prototype**
 
-Developer: ArkansasIo
-Version: 0.1.6
+Developer: ArkansasIo  
+Version: 0.1.8  
 Year: 2026
 
 AI-native development and knowledge environment combining persistent project memory, AI agent teams, UML/Blueprint design, documentation, source code, Git/GitHub integration, and offline/local operation.
 
-## Prototype Goals
+## Main AI Engine: Brain LLM
 
-- Project and team organization
-- Persistent memory
-- AI agent-team orchestration
-- UML and blueprint artifacts
-- Documents and Markdown
-- Language-agnostic projects
-- GitHub repository integration
-- Local/offline-first architecture
-- Approval-based file, commit, and push workflow
+**Brain LLM** is the canonical application-level AI/LLM engine. Ollama is the default local inference backend used by Brain LLM.
+
+```text
+AI Second Brain
+      |
+      v
+  Brain LLM
+      |
+      +--> Ollama local backend
+      +--> External model providers
+      +--> Agent workforce
+      +--> Memory
+      +--> Search / Math tools
+      +--> BrainScript
+```
 
 ## Current Foundation
 
 - Binder-style folder workspace with document tree
 - Program Studio for code, canvas, whiteboard, and drafting
-- BrainScript OOP language contracts
-- Local Ollama/API integration
+- BrainScript OOP language contracts and compiler foundation
+- Brain LLM primary AI engine
+- Ollama provider adapter
+- Agent/tool/work scheduler
+- Search and math provider systems
+- Persistent workspace storage
 - Responsive desktop, tablet, and mobile layout
 - GitHub Pages deployment workflow
 - Release/version metadata and licensing policy records
 
-## Planned Applications
+## API
 
-- Desktop IDE
-- Web dashboard
-- API server
-- MCP server
-- VS Code extension
-- Visual Studio extension
+New AI routes use `/api/brain-llm/*`. Existing `/api/ollama/*` routes remain compatibility aliases.
 
 ## Repository Layout
 
 ```text
 apps/        Application frontends and integrations
 packages/    Shared core services
+config/      Runtime configuration
 database/    Database schema and migrations
 docs/        Product and developer documentation
 uml/         UML and architecture sources
