@@ -1,0 +1,4 @@
+export type StickyColor = 'yellow' | 'blue' | 'green' | 'red' | 'orange' | 'purple' | 'pink' | 'cyan';
+export interface StickyNote { id: string; number: number; name: string; title: string; content: string; color: StickyColor; folderId?: string; pageId?: string; pinned: boolean; completed: boolean; x: number; y: number; z: number; updatedAt: string; }
+export function createStickyNote(number: number, color: StickyColor = 'yellow'): StickyNote { return { id: `NOTE-${String(number).padStart(4, '0')}`, number, name: `Note ${number}`, title: 'New Note', content: '', color, pinned: false, completed: false, x: 40, y: 40, z: number, updatedAt: new Date().toISOString() }; }
+export function updateStickyNote(note: StickyNote, patch: Partial<Omit<StickyNote, 'id' | 'number'>>): StickyNote { return { ...note, ...patch, updatedAt: new Date().toISOString() }; }
