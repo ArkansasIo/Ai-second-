@@ -1,0 +1,35 @@
+{
+  "product": "AI Second Brain",
+  "edition": "Professional",
+  "version": "0.1.0",
+  "bootloaderVersion": "0.1.0",
+  "defaultMode": "local",
+  "updateChannels": ["stable", "beta", "development"],
+  "startupChecks": [
+    "platform",
+    "installation",
+    "configuration",
+    "runtime",
+    "ollama",
+    "database"
+  ],
+  "services": [
+    "local-api",
+    "mysql",
+    "ollama"
+  ],
+  "recoveryModes": [
+    "normal",
+    "repair",
+    "update",
+    "diagnostics",
+    "offline",
+    "rollback",
+    "exit"
+  ],
+  "privacy": {
+    "cloudSyncDefault": false,
+    "remoteModelsDefault": false,
+    "telemetryDefault": false
+  }
+}
