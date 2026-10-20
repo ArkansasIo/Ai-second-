@@ -17,10 +17,10 @@ function build(items:Item[],rootName:string,close:()=>void,level=0){
 }
 
 function install(){
- const bar=document.querySelector<HTMLElement>('.ide-menu');if(!bar||bar.dataset.vscodeMenus==='1')return;bar.dataset.vscodeMenus='1';
- const names=['File','Edit','Selection','View','Go','Run','Terminal','Help'];
- bar.innerHTML='';
- let active:HTMLElement|null=null;
+ const original=document.querySelector<HTMLElement>('.ide-menu');if(!original||document.getElementById('ai-second-brain-vscode-menu'))return;
+ original.style.visibility='hidden';original.style.pointerEvents='none';
+ const bar=document.createElement('div');bar.id='ai-second-brain-vscode-menu';bar.className='vscode-dom-bar';document.body.appendChild(bar);
+ const names=['File','Edit','Selection','View','Go','Run','Terminal','Help'];let active:HTMLElement|null=null;
  const close=()=>{bar.querySelectorAll('.vscode-dom-menu').forEach(x=>x.remove());bar.querySelectorAll('.vscode-dom-root.open').forEach(x=>x.classList.remove('open'));active=null};
  names.forEach(name=>{const root=document.createElement('div');root.className='vscode-dom-root';const button=document.createElement('button');button.className='vscode-dom-root-button';button.textContent=name;root.appendChild(button);bar.appendChild(root);button.addEventListener('click',e=>{e.stopPropagation();if(active===root){close();return}close();root.classList.add('open');active=root;root.appendChild(build(menus[name],name,close));});button.addEventListener('mouseenter',()=>{if(active&&active!==root){close();root.classList.add('open');active=root;root.appendChild(build(menus[name],name,close))}})});
  document.addEventListener('click',e=>{if(!bar.contains(e.target as Node))close()});
