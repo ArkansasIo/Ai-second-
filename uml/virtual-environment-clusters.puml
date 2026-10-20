@@ -1,0 +1,46 @@
+@startuml
+skinparam componentStyle rectangle
+
+actor User
+component "AI Second Brain" as ASB
+component "Cluster Scheduler" as Scheduler
+component "Resource Monitor" as Monitor
+component "Agent Pool" as Agents
+
+node "Android Environment" as Android {
+  component "Android SDK/NDK"
+  component "Gradle"
+  artifact "APK/AAB"
+}
+
+node "iOS Environment" as IOS {
+  component "Xcode / iOS SDK"
+  component "Swift / Obj-C"
+  artifact "IPA/Archive"
+}
+
+node "Unreal Environment" as UE {
+  component "UnrealBuildTool"
+  component "UE C++ / Blueprint"
+  artifact "Plugin / Package"
+}
+
+node "Godot Environment" as Godot {
+  component "Godot 4.x"
+  component "GDScript / C++ / C#"
+  artifact "Exported Game"
+}
+
+User --> ASB
+ASB --> Scheduler
+Scheduler --> Monitor
+Scheduler --> Agents
+Scheduler --> Android
+Scheduler --> IOS
+Scheduler --> UE
+Scheduler --> Godot
+Agents --> Android
+Agents --> IOS
+Agents --> UE
+Agents --> Godot
+@enduml
