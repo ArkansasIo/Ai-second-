@@ -1,0 +1,3 @@
+import{parseBrainScript}from'./BrainScriptParser';import{BrainScriptRuntime,type BrainScriptRuntimeOptions}from'./BrainScriptRuntime';
+export * from './ast';export * from './BrainScriptLexer';export * from './BrainScriptParser';export * from './BrainScriptRuntime';
+export async function executeBrainScript(source:string,name='Main',options:BrainScriptRuntimeOptions={}){const parsed=parseBrainScript(source,name);if(parsed.diagnostics.length)return{diagnostics:parsed.diagnostics,result:undefined};const runtime=new BrainScriptRuntime(options);return{diagnostics:[],result:await runtime.run(parsed.ast)}}
