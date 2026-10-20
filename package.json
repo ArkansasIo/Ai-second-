@@ -1,8 +1,8 @@
 {
   "name": "ai-second-brain",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "private": true,
-  "description": "AI Binder local-first application with Brain LLM and modular BrainScript orchestration",
+  "description": "AI Binder local-first application with NeuroBrain, Brain LLM, Ollama inference, and modular BrainScript orchestration",
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
