@@ -1,51 +1,27 @@
 import { brainLLM, type BrainLLMMessage, type BrainLLMResponse } from '../brainllm/BrainLLM';
 import type { AgentDefinition } from './agentRegistry';
+import { buildWorkspaceContext, type WorkspaceContext } from '../workspace/WorkspaceContextBuilder';
+import { conversationMemory } from '../memory/ConversationMemoryStore';
+import { auditLog } from '../ai/auditLog';
+import { provenanceLog } from '../ai/provenance';
 
-export interface BrainLLMAgentRequest {
-  agent: AgentDefinition;
-  providerId?: string;
-  model: string;
-  messages: BrainLLMMessage[];
-  temperature?: number;
-  maxTokens?: number;
-}
+export interface BrainLLMAgentRequest { agent: AgentDefinition; providerId?: string; model: string; messages: BrainLLMMessage[]; temperature?: number; maxTokens?: number; workspaceContext?: WorkspaceContext; folderId?: string; projectId?: string; persistMemory?: boolean; }
+export interface BrainLLMAgentResult { agentId: string; response: BrainLLMResponse; workspaceContext: WorkspaceContext; }
 
-export interface BrainLLMAgentResult {
-  agentId: string;
-  response: BrainLLMResponse;
-}
-
-/**
- * Canonical bridge between the workforce/agent layer and the Brain LLM engine.
- * Agent roles and permissions remain application concerns; model inference is
- * delegated to the registered Brain LLM provider.
- */
 export class BrainLLMAgentRuntime {
-  async run(request: BrainLLMAgentRequest): Promise<BrainLLMAgentResult> {
-    if (!request.agent.enabled) throw new Error(`Agent is disabled: ${request.agent.id}`);
-
-    const systemMessage: BrainLLMMessage = {
-      role: 'system',
-      content: [
-        `You are the ${request.agent.name} agent.`,
-        `Role: ${request.agent.role}.`,
-        request.agent.systemPrompt,
-        `Available application tools: ${request.agent.tools.join(', ') || 'none'}.`,
-        'Use tools only through the application tool permission system.'
-      ].join('\n')
-    };
-
-    const providerId = request.providerId ?? 'ollama';
-    const response = await brainLLM.chat(providerId, {
-      model: request.model,
-      messages: [systemMessage, ...request.messages],
-      temperature: request.temperature,
-      maxTokens: request.maxTokens,
-      stream: false
-    });
-
-    return { agentId: request.agent.id, response };
-  }
+ async run(request: BrainLLMAgentRequest): Promise<BrainLLMAgentResult> {
+  if (!request.agent.enabled) throw new Error(`Agent is disabled: ${request.agent.id}`);
+  const workspaceContext=request.workspaceContext ?? buildWorkspaceContext(request.folderId,request.projectId);
+  const contextMessage:BrainLLMMessage={role:'system',content:`Workspace context:\n${workspaceContext.summary}\n\nRelevant documents:\n${workspaceContext.documents.map(d=>`--- ${d.path} [${d.language}] ---\n${d.content}`).join('\n')||'none'}`};
+  const systemMessage: BrainLLMMessage = {role:'system',content:[`You are the ${request.agent.name} agent.`,`Role: ${request.agent.role}.`,request.agent.systemPrompt,`Available application tools: ${request.agent.tools.join(', ') || 'none'}.`,'Use tools only through the application tool permission system.'].join('\n')};
+  const messages=[systemMessage,contextMessage,...request.messages];
+  if(request.persistMemory!==false)for(const message of request.messages)conversationMemory.append({role:message.role,content:message.content,workspaceId:workspaceContext.workspaceId,projectId:workspaceContext.projectId,agentId:request.agent.id});
+  const providerId=request.providerId ?? 'ollama';
+  auditLog.record({action:'agent.brain-llm.run',actor:request.agent.id,target:providerId,details:{model:request.model,workspaceId:workspaceContext.workspaceId,projectId:workspaceContext.projectId}});
+  const response=await brainLLM.chat(providerId,{model:request.model,messages,temperature:request.temperature,maxTokens:request.maxTokens,stream:false});
+  if(request.persistMemory!==false)conversationMemory.append({role:'assistant',content:response.content,workspaceId:workspaceContext.workspaceId,projectId:workspaceContext.projectId,agentId:request.agent.id});
+  provenanceLog.add({source:`brain-llm:${providerId}`,provider:response.provider,agentId:request.agent.id,metadata:{model:response.model,workspaceId:workspaceContext.workspaceId,projectId:workspaceContext.projectId}});
+  return {agentId:request.agent.id,response,workspaceContext};
+ }
 }
-
 export const brainLLMAgentRuntime = new BrainLLMAgentRuntime();
