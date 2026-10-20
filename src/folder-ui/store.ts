@@ -27,8 +27,8 @@ export class FolderWorkspaceStore {
   subscribe(listener: (snapshot: WorkspaceSnapshot) => void) { this.listeners.add(listener); return () => this.listeners.delete(listener); }
   getSnapshot() { return this.snapshot; }
 
-  async openFolder(id: string) { this.updateFolder(id, { state: 'open' }); }
-  async closeFolder(id: string) { this.updateFolder(id, { state: 'closed' }); }
+  async openFolder(id: string) { await this.updateFolder(id, { state: 'open' }); }
+  async closeFolder(id: string) { await this.updateFolder(id, { state: 'closed' }); }
 
   async addPage(folderId: string, page: Omit<FolderPage, 'id' | 'number' | 'folderId' | 'createdAt' | 'updatedAt'>) {
     const now = new Date().toISOString();
@@ -43,8 +43,9 @@ export class FolderWorkspaceStore {
   async reorderPages(folderId: string, pageIds: string[]) {
     const valid = new Set(this.snapshot.pages.filter(p => p.folderId === folderId).map(p => p.id));
     const ordered = pageIds.filter(id => valid.has(id));
-    this.snapshot.folders = this.snapshot.folders.map(f => f.id === folderId ? { ...f, pageIds: ordered, updatedAt: new Date().toISOString() } : f);
-    this.snapshot.pages = this.snapshot.pages.map(p => p.folderId === folderId ? { ...p, number: ordered.indexOf(p.id) + 1, updatedAt: new Date().toISOString() } : p);
+    const now = new Date().toISOString();
+    this.snapshot.folders = this.snapshot.folders.map(f => f.id === folderId ? { ...f, pageIds: ordered, updatedAt: now } : f);
+    this.snapshot.pages = this.snapshot.pages.map(p => p.folderId === folderId ? { ...p, number: ordered.indexOf(p.id) + 1, updatedAt: now } : p);
     await this.persist();
   }
 
@@ -54,9 +55,15 @@ export class FolderWorkspaceStore {
     await this.persist();
   }
 
-  private updateFolder(id: string, patch: Partial<FolderInstance>) {
+  async replaceSnapshot(snapshot: WorkspaceSnapshot) {
+    this.snapshot = createSnapshot(snapshot.folders, snapshot.pages, snapshot.notes);
+    await saveWorkspace(this.snapshot);
+    this.emit();
+  }
+
+  private async updateFolder(id: string, patch: Partial<FolderInstance>) {
     this.snapshot.folders = this.snapshot.folders.map(f => f.id === id ? { ...f, ...patch, updatedAt: new Date().toISOString() } : f);
-    void this.persist();
+    await this.persist();
   }
 
   private async persist() { this.snapshot = createSnapshot(this.snapshot.folders, this.snapshot.pages, this.snapshot.notes); await saveWorkspace(this.snapshot); this.emit(); }
