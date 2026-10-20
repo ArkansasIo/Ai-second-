@@ -13,17 +13,37 @@ jobs:
   windows-exe:
     runs-on: windows-latest
     steps:
-      - name: Checkout
+      - name: Checkout complete repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - name: Install dependencies
         run: npm install
+
+      - name: Verify application version
+        shell: pwsh
+        run: |
+          $package = Get-Content package.json | ConvertFrom-Json
+          $version = (Get-Content VERSION -Raw).Trim()
+          if ($package.version -ne $version) { throw "Version mismatch: package=$($package.version) VERSION=$version" }
+          Write-Host "Building AI Second Brain $version"
+
+      - name: Run typecheck
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm test
+
       - name: Build Windows installer and portable EXE
         run: npm run desktop:win
+
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
