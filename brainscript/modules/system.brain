@@ -1,0 +1,27 @@
+module AI_Binder { version = "0.1.12" }
+module Brain_LLM { domain = "brainllm"; depends = ["core.lifecycle"] }
+module Agents { domain = "agents"; depends = ["ai.brain-llm"] }
+module Workforce { domain = "workforce"; depends = ["agents.runtime"] }
+module Binder { domain = "binder"; depends = ["core.lifecycle"] }
+module Workspace { domain = "workspace"; depends = ["core.lifecycle"] }
+module Tools { domain = "tools"; depends = ["core.lifecycle"] }
+module Plugins { domain = "plugins"; depends = ["tools.catalog"] }
+module Memory { domain = "memory"; depends = ["workspace.platform"] }
+module Development { domain = "development"; depends = ["workspace.platform", "tools.catalog"] }
+module Verification { domain = "verification"; depends = ["core.lifecycle"] }
+module Security { domain = "security"; depends = ["core.lifecycle"] }
+module Integrations { domain = "integrations"; depends = ["plugins.runtime", "security.policy"] }
+module Runtime { domain = "runtime"; depends = ["core.lifecycle"] }
+module Packaging { domain = "packaging"; depends = ["development.pipeline", "verification.loop"] }
+
+workflow SystemLoop {
+  task ConfigureModules
+  task Execute
+  task Verify
+  task SelfVerify
+  task Recover
+  task Persist
+  task Report
+}
+
+on module.change { Verify; SelfVerify; Persist; Report }
