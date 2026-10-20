@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "libraries": [
+    {"language":"python","nodes":["print","len","range","str","int","float","list","dict","if","for","while","try","async","await","return"]},
+    {"language":"cpp","nodes":["std::cout","std::cin","std::vector","std::string","std::map","if","switch","for","while","try","return","+","-","*","/","==","!=","&&","||"]},
+    {"language":"typescript","nodes":["console.log","Array","Map","Promise","if","switch","for","while","async","await","return","+","-","*","/","===","!==","&&","||"]},
+    {"language":"universal","nodes":["Add","Subtract","Multiply","Divide","Equal","NotEqual","And","Or","Not","Branch","Switch","Loop","Event","Function","Variable","Constant","Return","Log","Build","Test","GitCommit","AgentCall"]}
+  ]
+}
