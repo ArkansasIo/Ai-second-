@@ -1,0 +1,19 @@
+@startuml
+actor User
+component "AI Second Brain" as APP
+component "Resource Monitor" as MON
+component "Cluster Scheduler" as SCHED
+component "Agent Pool" as AGENTS
+component "Ollama Runtime" as OLLAMA
+component "Model Registry" as MODELS
+
+User --> APP : create/configure agents
+APP --> AGENTS
+APP --> MODELS
+AGENTS --> SCHED
+MON --> SCHED : CPU/RAM/GPU/VRAM
+SCHED --> OLLAMA : admitted generation
+SCHED --> AGENTS : queue/throttle/resume
+MODELS --> OLLAMA : model selection
+OLLAMA --> SCHED : completion/status
+@enduml
