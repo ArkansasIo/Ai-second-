@@ -1,0 +1,14 @@
+{
+  "workshops": [
+    {"id":"WORKSHOP-00001","name":"C++ Workshop","platform":"windows","environmentPreset":"cpp-core"},
+    {"id":"WORKSHOP-00002","name":"Python Workshop","platform":"windows","environmentPreset":"python"},
+    {"id":"WORKSHOP-00003","name":"Unreal Workshop","platform":"windows","environmentPreset":"unreal-engine"},
+    {"id":"WORKSHOP-00004","name":"Godot Workshop","platform":"windows","environmentPreset":"godot-engine"},
+    {"id":"WORKSHOP-00005","name":"Android Workshop","platform":"windows","environmentPreset":"android-apk"},
+    {"id":"WORKSHOP-00006","name":"iOS Workshop","platform":"macos","environmentPreset":"ios-app"},
+    {"id":"WORKSHOP-00007","name":"Blender Workshop","platform":"windows","environmentPreset":"blender"},
+    {"id":"WORKSHOP-00008","name":"Web Workshop","platform":"windows","environmentPreset":"web-typescript"},
+    {"id":"WORKSHOP-00009","name":"Research Workshop","platform":"windows","environmentPreset":"research"},
+    {"id":"WORKSHOP-00010","name":"Documentation Workshop","platform":"windows","environmentPreset":"documentation"}
+  ]
+}
