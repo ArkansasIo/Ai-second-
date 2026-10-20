@@ -1,34 +1,46 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { DocumentTree } from './folder-ui/DocumentTree';
+import type { TreeNode } from './folder-ui/treeTypes';
 import './styles.css';
 
 type Workshop = { id: string; name: string; environment: string; agents: number };
 type BrowserTab = { id: string; title: string; url: string; icon: string };
 type UpdateInfo = { channel: string; version: string; status: 'current' | 'available' | 'error'; message: string };
-
 const APP_VERSION = '0.1.1';
 const workshops: Workshop[] = [
   { id: 'WORKSHOP-00001', name: 'C++ Core', environment: 'C++', agents: 4 },
   { id: 'WORKSHOP-00002', name: 'Android App', environment: 'Android', agents: 6 },
   { id: 'WORKSHOP-00003', name: 'Game Studio', environment: 'Unreal', agents: 8 },
-  { id: 'WORKSHOP-00004', name: 'Blender Assets', environment: 'Blender', agents: 5 }
+  { id: 'WORKSHOP-00004', name: 'Blender Assets', environment: 'Blender', agents: 5 },
 ];
 const nav = ['Projects', 'Issues', 'Code', 'Pull Requests', 'Agents', 'Actions', 'Roadmaps', 'Security', 'Insights', 'Releases', 'Environments', 'Blueprints', 'Extensions', 'Terminal', 'Memory', 'GitHub'];
 const releaseChannels = ['pre-alpha', 'alpha', 'pre-beta', 'beta', 'gold'];
 const initialBrowserTabs: BrowserTab[] = [
   { id: 'TAB-00001', title: 'AI Second Brain', url: 'secondbrain://workspace', icon: '⌂' },
   { id: 'TAB-00002', title: 'GitHub', url: 'https://github.com', icon: 'G' },
-  { id: 'TAB-00003', title: 'Ollama', url: 'http://127.0.0.1:11434', icon: 'O' }
+  { id: 'TAB-00003', title: 'Ollama', url: 'http://127.0.0.1:11434', icon: 'O' },
 ];
-
-function apiBase(): string {
-  return (window.localStorage.getItem('ai-second-brain.apiBase') || 'http://127.0.0.1:8787').replace(/\/$/, '');
-}
+function apiBase(): string { return (window.localStorage.getItem('ai-second-brain.apiBase') || 'http://127.0.0.1:8787').replace(/\/$/, ''); }
 async function postChat(model: string, message: string): Promise<string> { const response = await fetch(`${apiBase()}/api/ollama/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ model, message }) }); if (!response.ok) throw new Error(`Local API returned ${response.status}`); const data = await response.json() as { response?: string; message?: { content?: string } }; return data.response || data.message?.content || 'The local model returned no text.'; }
 async function loadModels(): Promise<string[]> { const response = await fetch(`${apiBase()}/api/ollama/models`); if (!response.ok) throw new Error(`Local API returned ${response.status}`); const data = await response.json() as { models?: Array<{ name: string }> }; return (data.models || []).map(model => model.name).filter(Boolean); }
 
 function App() {
-  const [active, setActive] = useState('Projects'); const [workshop, setWorkshop] = useState(workshops[0]); const [model, setModel] = useState(''); const [models, setModels] = useState<string[]>([]); const [prompt, setPrompt] = useState(''); const [messages, setMessages] = useState<string[]>(['Welcome to AI Second Brain. Connect your local API and Ollama to use live AI.']); const [channel, setChannel] = useState(() => localStorage.getItem('ai-second-brain.channel') || 'gold'); const [apiStatus, setApiStatus] = useState<'local' | 'offline'>('offline'); const [busy, setBusy] = useState(false); const [update, setUpdate] = useState<UpdateInfo>({ channel: 'gold', version: `v${APP_VERSION}`, status: 'current', message: 'You are on the Gold channel.' }); const [checking, setChecking] = useState(false); const [browserTabs, setBrowserTabs] = useState<BrowserTab[]>(initialBrowserTabs); const [activeBrowserTab, setActiveBrowserTab] = useState('TAB-00001');
+  const [active, setActive] = useState('Projects');
+  const [workshop, setWorkshop] = useState(workshops[0]);
+  const [model, setModel] = useState('');
+  const [models, setModels] = useState<string[]>([]);
+  const [prompt, setPrompt] = useState('');
+  const [messages, setMessages] = useState<string[]>(['Welcome to AI Second Brain. Connect your local API and Ollama to use live AI.']);
+  const [channel, setChannel] = useState(() => localStorage.getItem('ai-second-brain.channel') || 'gold');
+  const [apiStatus, setApiStatus] = useState<'local' | 'offline'>('offline');
+  const [busy, setBusy] = useState(false);
+  const [update, setUpdate] = useState<UpdateInfo>({ channel: 'gold', version: `v${APP_VERSION}`, status: 'current', message: 'You are on the Gold channel.' });
+  const [checking, setChecking] = useState(false);
+  const [browserTabs, setBrowserTabs] = useState<BrowserTab[]>(initialBrowserTabs);
+  const [activeBrowserTab, setActiveBrowserTab] = useState('TAB-00001');
+  const [treeOpen, setTreeOpen] = useState(true);
+  const [openedDocument, setOpenedDocument] = useState<TreeNode | null>(null);
   useEffect(() => { localStorage.setItem('ai-second-brain.channel', channel); setUpdate(current => ({ ...current, channel, message: `Update channel set to ${channel}.` })); }, [channel]);
   useEffect(() => { let mounted = true; loadModels().then(found => { if (mounted) { setModels(found); setModel(found[0] || 'qwen3'); setApiStatus('local'); } }).catch(() => { if (mounted) setApiStatus('offline'); }); return () => { mounted = false; }; }, []);
   const graph = useMemo(() => [['Event', 'OnStart'], ['Data', 'Load Project'], ['Logic', 'Validate'], ['Function', 'Build'], ['Output', 'Result']], []);
@@ -37,19 +49,26 @@ function App() {
   function openBrowserTab() { const id = `TAB-${String(browserTabs.length + 1).padStart(5, '0')}`; const tab: BrowserTab = { id, title: 'New Tab', url: 'https://', icon: '+' }; setBrowserTabs(current => [...current, tab]); setActiveBrowserTab(id); }
   function closeBrowserTab(id: string) { if (browserTabs.length === 1) return; const remaining = browserTabs.filter(tab => tab.id !== id); setBrowserTabs(remaining); if (activeBrowserTab === id) setActiveBrowserTab(remaining[Math.max(0, remaining.length - 1)].id); }
   function navigateBrowserTab(url: string) { setBrowserTabs(current => current.map(tab => tab.id === activeBrowserTab ? { ...tab, url, title: url.replace(/^https?:\/\//, '').replace(/\/$/, '') || 'New Tab' } : tab)); }
+  function openTreeDocument(node: TreeNode) { setOpenedDocument(node); if (node.kind === 'folder') { setActive(node.name); } else if (node.name === 'Account') { setActive('GitHub'); } else { const mapped = nav.find(item => item.toLowerCase() === node.name.toLowerCase() || item.toLowerCase().replace(/ /g, '-') === node.key); if (mapped) setActive(mapped); } }
   const content = { Projects: ['Projects', 'Your local projects and workspaces.'], Issues: ['Issues', 'Track bugs, tasks, priorities, and agent assignments.'], Code: ['Code', 'Repository files, branches, worktrees, and source changes.'], 'Pull Requests': ['Pull Requests', 'Review proposed changes before merging.'], Agents: ['Agents', 'Manage agent roles, models, permissions, and status.'], Actions: ['Actions', 'Build, test, package, and automation workflows.'], Roadmaps: ['Roadmaps', 'Plan milestones, deadlines, dependencies, and releases.'], Security: ['Security', 'Permissions, secrets, dependencies, and audit controls.'], Insights: ['Insights', 'Project health, workload, builds, tests, and resources.'], Releases: ['Releases', 'Versioned packages, release notes, checksums, and channels.'], Environments: ['Environments', 'Virtual development environments and toolchains.'], Blueprints: ['Blueprints', 'Visual programs and language-specific code generation.'], Extensions: ['Extensions', 'Installed IDE and application integrations.'], Terminal: ['Terminal', 'Command sessions for the active workshop environment.'], Memory: ['Memory', 'Project knowledge, conversations, and long-term context.'], GitHub: ['GitHub', 'Repository, issues, pull requests, actions, and release integration.'] } as Record<string, [string, string]>;
-  const section = content[active] || content.Projects; const currentBrowserTab = browserTabs.find(tab => tab.id === activeBrowserTab) || browserTabs[0];
+  const section = content[active] || content.Projects;
+  const currentBrowserTab = browserTabs.find(tab => tab.id === activeBrowserTab) || browserTabs[0];
   return <div className="app">
     <header className="topbar"><div className="brand">AI SECOND BRAIN <span>Professional</span></div><div className="ctobar"><button onClick={() => setActive('Projects')}>Command Center</button><button onClick={() => setActive('Agents')}>Agents</button><button onClick={() => setActive('Actions')}>Run</button><button onClick={() => setActive('Insights')}>Monitor</button></div><div className={apiStatus === 'local' ? 'status online' : 'status'}>● {apiStatus === 'local' ? `Ollama Local${model ? ` · ${model}` : ''}` : 'Local API Offline'}</div><div className="version">v{APP_VERSION}</div><button className="updateButton" onClick={checkForUpdates} disabled={checking}>{checking ? 'Checking…' : 'Check for Updates'}</button></header>
     <div className="browserBar"><button className="browserControl" onClick={() => window.history.back()}>←</button><button className="browserControl" onClick={() => window.history.forward()}>→</button><button className="browserControl" onClick={() => window.location.reload()}>↻</button><div className="browserTabs">{browserTabs.map(tab => <button key={tab.id} className={tab.id === activeBrowserTab ? 'browserTab selected' : 'browserTab'} onClick={() => setActiveBrowserTab(tab.id)}><span>{tab.icon}</span>{tab.title}<b onClick={event => { event.stopPropagation(); closeBrowserTab(tab.id); }}>×</b></button>)}<button className="browserNew" onClick={openBrowserTab}>+</button></div><input className="addressBar" value={currentBrowserTab.url} onChange={event => navigateBrowserTab(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') navigateBrowserTab(event.currentTarget.value); }} aria-label="Address bar" /></div>
-    <div className="body"><aside className="sidebar"><button className="new" onClick={() => setActive('Projects')}>+ New Workshop</button>{nav.map(item => <button key={item} className={active === item ? 'nav active' : 'nav'} onClick={() => setActive(item)}>{item}</button>)}<div className="sidebarFoot"><button className="nav" onClick={() => setActive('GitHub')}>Account</button><button className="nav" onClick={() => setActive('Security')}>Settings</button></div></aside>
+    <div className="body">
+      {treeOpen && <DocumentTree onOpen={openTreeDocument} onCreate={node => { setOpenedDocument(node); setMessages(current => [...current, `System: Create a new document or folder inside ${node.name}.`]); }} />}
+      <aside className="sidebar"><button className="new" onClick={() => setActive('Projects')}>+ New Workshop</button><button className="nav" onClick={() => setTreeOpen(value => !value)}>{treeOpen ? '‹ Hide Document Tree' : '› Document Tree'}</button>{nav.map(item => <button key={item} className={active === item ? 'nav active' : 'nav'} onClick={() => setActive(item)}>{item}</button>)}<div className="sidebarFoot"><button className="nav" onClick={() => setActive('GitHub')}>Account</button><button className="nav" onClick={() => setActive('Security')}>Settings</button></div></aside>
       <main className="workspace"><div className="workshopTabs">{workshops.map(w => <button key={w.id} className={w.id === workshop.id ? 'tab selected' : 'tab'} onClick={() => setWorkshop(w)}>{w.name}<small>{w.environment}</small></button>)}</div>
-        <section className="hero"><div><div className="eyebrow">{active.toUpperCase()}</div><h1>{active === 'Projects' ? workshop.name : section[0]}</h1><p>{active === 'Projects' ? `${workshop.id} · ${workshop.environment} environment · ${workshop.agents} agents` : section[1]}</p></div><select value={model} onChange={e => setModel(e.target.value)} disabled={!models.length}><option value="">{models.length ? 'Select Ollama model' : 'Ollama model unavailable'}</option>{models.map(item => <option key={item} value={item}>{item}</option>)}</select></section>
-        {active !== 'Projects' && <section className="panel sectionPlaceholder"><div className="panelTitle">{section[0]}</div><p>{section[1]}</p><p className="panelFooter">This workspace is connected to {workshop.name} · {workshop.environment}.</p></section>}
+        <section className="hero"><div><div className="eyebrow">{openedDocument ? openedDocument.path.toUpperCase() : active.toUpperCase()}</div><h1>{openedDocument ? openedDocument.name : (active === 'Projects' ? workshop.name : section[0])}</h1><p>{openedDocument ? `${openedDocument.kind} · ${openedDocument.documentStyle || 'plain'} document · node ${String(openedDocument.number).padStart(3, '0')}` : (active === 'Projects' ? `${workshop.id} · ${workshop.environment} environment · ${workshop.agents} agents` : section[1])}</p></div><select value={model} onChange={e => setModel(e.target.value)} disabled={!models.length}><option value="">{models.length ? 'Select Ollama model' : 'Ollama model unavailable'}</option>{models.map(item => <option key={item} value={item}>{item}</option>)}</select></section>
+        {openedDocument && <section className={`panel openedDocument document-style-${openedDocument.documentStyle || 'plain'}`}><div className="panelTitle"><span>{openedDocument.icon} {openedDocument.name}</span><span>{openedDocument.path}</span></div><div className="documentMeta"><span>ID: {openedDocument.id}</span><span>TYPE: {openedDocument.kind}</span><span>KEY: {openedDocument.key}</span><span>CHILDREN: {openedDocument.children.length}</span></div><div className="documentCanvas"><div className="documentLine">{openedDocument.kind === 'folder' ? 'Folder contents are shown in the document tree.' : `Open ${openedDocument.name} here to edit its ${openedDocument.extension || openedDocument.kind} content.`}</div><div className="documentLine">This document is linked to its parent folder and remains addressable by its stable tree ID.</div><div className="documentLine">Create components, subcomponents, design documents, Markdown, UML, code, tests, and artifacts from this workspace.</div></div></section>}
+        {active !== 'Projects' && !openedDocument && <section className="panel sectionPlaceholder"><div className="panelTitle">{section[0]}</div><p>{section[1]}</p><p className="panelFooter">This workspace is connected to {workshop.name} · {workshop.environment}.</p></section>}
         <section className="updatePanel panel"><div className="panelTitle">Release & Updates <span className={`updateState ${update.status}`}>{update.status.toUpperCase()}</span></div><div className="updateControls"><label>Channel <select value={channel} onChange={e => setChannel(e.target.value)}>{releaseChannels.map(item => <option key={item} value={item}>{item === 'gold' ? 'Gold (Stable)' : item.replace('-', ' ')}</option>)}</select></label><span className="updateMessage">{update.message}</span><span className="updateVersion">{update.version}</span></div></section>
         <section className="cards"><div className="card"><b>Project</b><strong>Prototype</strong><span>42 tasks · 68% planned</span></div><div className="card"><b>Agents</b><strong>{workshop.agents} active</strong><span>Parallel cluster ready</span></div><div className="card"><b>Build</b><strong>Ready</strong><span>Compiler environment detected</span></div><div className="card"><b>Browser</b><strong>Responsive</strong><span>Phone · iPad · Desktop</span></div></section>
         <section className="contentGrid"><div className="panel blueprint"><div className="panelTitle">Universal Blueprint <button onClick={() => setActive('Blueprints')}>+ Node</button></div><div className="graph">{graph.map(([kind, label], i) => <React.Fragment key={label}><div className="node"><small>{kind}</small><b>{label}</b><i>●</i></div>{i < graph.length - 1 && <div className="wire">→</div>}</React.Fragment>)}</div><div className="panelFooter">Target: {workshop.environment} · C++ / Python / Rust / TypeScript adapters</div></div><div className="panel cluster"><div className="panelTitle">Agent Cluster <span>PARALLEL</span></div>{Array.from({ length: workshop.agents }, (_, i) => <div className="agent" key={i}><span className="dot"/> AGENT-{String(i + 1).padStart(5, '0')} <small>{['Architect','Coder','Researcher','QA','Documentation'][i % 5]}</small></div>)}</div></section>
         <section className="chat panel"><div className="panelTitle">AI Chat <span>{apiStatus === 'local' ? 'LIVE LOCAL AI' : 'OFFLINE / DEMO'}</span></div><div className="messages">{messages.map((m, i) => <div key={i}>{m}</div>)}</div><div className="composer"><input value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Ask your agents or describe a program..." disabled={busy}/><button onClick={send} disabled={busy || !prompt.trim()}>{busy ? 'Working…' : 'Send'}</button></div></section>
-      </main></div></div>;
+      </main>
+    </div>
+  </div>;
 }
 createRoot(document.getElementById('root')!).render(<App />);
