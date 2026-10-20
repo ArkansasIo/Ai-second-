@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-second-brain.local/schemas/blueprint.schema.json",
+  "title": "AI Second Brain Universal Blueprint Graph",
+  "type": "object",
+  "required": ["id", "name", "version", "target", "nodes", "edges"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^BLUEPRINT-[0-9]{5}$" },
+    "name": { "type": "string", "minLength": 1 },
+    "version": { "type": "string" },
+    "target": {
+      "type": "object",
+      "required": ["language"],
+      "properties": {
+        "language": { "type": "string" },
+        "compiler": { "type": "string" },
+        "platform": { "type": "string" },
+        "projectId": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "position", "inputs", "outputs"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "label": { "type": "string" },
+          "position": {
+            "type": "object",
+            "required": ["x", "y"],
+            "properties": { "x": { "type": "number" }, "y": { "type": "number" } },
+            "additionalProperties": false
+          },
+          "inputs": { "type": "array", "items": { "$ref": "#/$defs/pin" } },
+          "outputs": { "type": "array", "items": { "$ref": "#/$defs/pin" } },
+          "metadata": { "type": "object", "additionalProperties": true }
+        },
+        "additionalProperties": false
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "fromNode", "fromPin", "toNode", "toPin", "kind"],
+        "properties": {
+          "id": { "type": "string" },
+          "fromNode": { "type": "string" },
+          "fromPin": { "type": "string" },
+          "toNode": { "type": "string" },
+          "toPin": { "type": "string" },
+          "kind": { "enum": ["execution", "data", "event", "reference"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "pin": {
+      "type": "object",
+      "required": ["id", "name", "type", "direction"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "direction": { "enum": ["input", "output"] },
+        "optional": { "type": "boolean" },
+        "default": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
