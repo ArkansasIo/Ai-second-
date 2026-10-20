@@ -6,6 +6,7 @@ export class WorkspaceStore {
  private history:WorkspaceState[]=[]; private future:WorkspaceState[]=[];
  async init(){const saved=await workspaceStorage.load(); if(saved)this.state=saved; return this.state;}
  snapshot(){return structuredClone(this.state);}
+ replaceState(next:WorkspaceState){this.commit(next);}
  private commit(next:WorkspaceState){this.history.push(this.snapshot()); this.future=[]; this.state={...next,workspace:{...next.workspace,updatedAt:nowIso()}}; void workspaceStorage.save(this.state);}
  undo(){const prev=this.history.pop(); if(!prev)return false; this.future.push(this.snapshot()); this.state=prev; void workspaceStorage.save(this.state); return true;}
  redo(){const next=this.future.pop(); if(!next)return false; this.history.push(this.snapshot()); this.state=next; void workspaceStorage.save(this.state); return true;}
