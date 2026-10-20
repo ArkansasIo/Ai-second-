@@ -3,7 +3,7 @@
 **Professional Edition — Prototype**
 
 Developer: ArkansasIo  
-Version: 0.1.10  
+Version: 0.1.11  
 Year: 2026
 
 AI-native development and knowledge environment combining persistent project memory, AI agent teams, UML/Blueprint design, documentation, source code, Git/GitHub integration, and offline/local operation.
@@ -14,9 +14,13 @@ AI-native development and knowledge environment combining persistent project mem
 
 New AI integrations should target `BrainLLM`/`brainLLM` rather than directly coupling to Ollama. Agent execution should use `BrainLLMAgentRuntime` so agent roles, system prompts, and tool declarations stay above the provider layer.
 
+## Workspace lifecycle
+
+The workspace core now provides persistent state plus undo/redo and lifecycle actions for folders and documents: rename, duplicate, move, delete, freeze, and validated JSON export/import. Workspace bundles are schema-checked before they can replace application state.
+
 ## Desktop and Android builds
 
-Version `0.1.10` includes packaging automation for the complete repository:
+Version `0.1.11` includes packaging automation for the complete repository:
 
 - Windows NSIS installer and portable `.exe` through Electron Builder.
 - Android debug `.apk` and unsigned release `.apk` through Capacitor and Gradle.
@@ -40,6 +44,7 @@ New AI routes use `/api/brain-llm/*`. Existing `/api/ollama/*` routes remain com
 - Agent/tool/work scheduler
 - Search and math provider systems
 - Persistent workspace storage
+- Workspace lifecycle actions and transfer validation
 - Responsive desktop, tablet, and mobile layout
 - GitHub Pages deployment workflow
 - Windows EXE packaging
