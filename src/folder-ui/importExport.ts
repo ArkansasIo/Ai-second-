@@ -1,0 +1,4 @@
+import type { WorkspaceSnapshot } from './types';
+export function exportWorkspace(snapshot: WorkspaceSnapshot): Blob { return new Blob([JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), snapshot }, null, 2)], { type: 'application/json' }); }
+export async function importWorkspace(file: File): Promise<WorkspaceSnapshot> { const parsed = JSON.parse(await file.text()) as { snapshot?: WorkspaceSnapshot }; if (!parsed.snapshot?.folders || !parsed.snapshot.pages || !parsed.snapshot.notes) throw new Error('Invalid AI Second Brain workspace file.'); return parsed.snapshot; }
+export function downloadWorkspace(snapshot: WorkspaceSnapshot, filename = 'ai-second-brain-workspace.json'): void { const url = URL.createObjectURL(exportWorkspace(snapshot)); const anchor = document.createElement('a'); anchor.href = url; anchor.download = filename; anchor.click(); URL.revokeObjectURL(url); }
