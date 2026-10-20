@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "product": "AI Second Brain",
+  "defaultChannel": "gold",
+  "channels": [
+    {
+      "id": "pre-alpha",
+      "name": "Pre-alpha",
+      "prerelease": true,
+      "stable": false,
+      "allowAutomaticUpdates": false,
+      "description": "Early engineering builds for development and internal testing."
+    },
+    {
+      "id": "alpha",
+      "name": "Alpha",
+      "prerelease": true,
+      "stable": false,
+      "allowAutomaticUpdates": false,
+      "description": "Integrated early builds for feature and architecture testing."
+    },
+    {
+      "id": "pre-beta",
+      "name": "Pre-beta",
+      "prerelease": true,
+      "stable": false,
+      "allowAutomaticUpdates": false,
+      "description": "Feature-complete preparation builds undergoing stabilization."
+    },
+    {
+      "id": "beta",
+      "name": "Beta",
+      "prerelease": true,
+      "stable": false,
+      "allowAutomaticUpdates": false,
+      "description": "Release-candidate builds for broader validation."
+    },
+    {
+      "id": "gold",
+      "name": "Gold",
+      "prerelease": false,
+      "stable": true,
+      "allowAutomaticUpdates": true,
+      "description": "Production-stable release channel."
+    }
+  ],
+  "versionPattern": {
+    "pre-alpha": "vMAJOR.MINOR.PATCH-pre-alpha.N",
+    "alpha": "vMAJOR.MINOR.PATCH-alpha.N",
+    "pre-beta": "vMAJOR.MINOR.PATCH-pre-beta.N",
+    "beta": "vMAJOR.MINOR.PATCH-beta.N",
+    "gold": "vMAJOR.MINOR.PATCH"
+  }
+}
