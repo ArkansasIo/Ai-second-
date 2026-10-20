@@ -4,7 +4,6 @@ const config: CapacitorConfig = {
   appId: 'com.arkansasio.ai.secondbrain',
   appName: 'AI Second Brain',
   webDir: 'dist',
-  bundledWebRuntime: false,
   android: {
     backgroundColor: '#ffffff'
   }
