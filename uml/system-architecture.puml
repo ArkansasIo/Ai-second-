@@ -1,0 +1,28 @@
+@startuml
+skinparam componentStyle rectangle
+actor User
+component "Web / Desktop / Mobile UI" as UI
+component "Local API" as API
+component "C++ Universal Core" as CORE
+component "Agent Cluster Orchestrator" as CLUSTER
+component "Memory Service" as MEMORY
+component "Update & Patch Service" as UPDATE
+component "Git / GitHub Service" as GIT
+component "Plugin Manager" as PLUGINS
+component "Ollama Runtime" as OLLAMA
+database "MySQL" as DB
+
+User --> UI
+UI --> API
+API --> CORE
+CORE --> CLUSTER
+CORE --> MEMORY
+CORE --> UPDATE
+CORE --> GIT
+CORE --> PLUGINS
+CORE --> OLLAMA
+CORE --> DB
+UPDATE --> GIT
+CLUSTER --> OLLAMA
+MEMORY --> DB
+@enduml
