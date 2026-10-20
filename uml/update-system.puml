@@ -1,0 +1,30 @@
+@startuml
+start
+:Read installed version;
+:Select release channel;
+:Query GitHub release manifest;
+if (New version?) then (yes)
+  :Display release notes;
+  :Download artifact;
+  :Verify checksum/signature;
+  if (Valid artifact?) then (yes)
+    :Backup local configuration;
+    :Run database migration;
+    :Install update;
+    :Run health checks;
+    if (Healthy?) then (yes)
+      :Record successful update;
+      :Restart client;
+    else (no)
+      :Restore backup;
+      :Rollback;
+      :Record failure;
+    endif
+  else (no)
+    :Reject artifact;
+  endif
+else (no)
+  :Report up to date;
+endif
+stop
+@enduml
