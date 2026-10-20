@@ -2,7 +2,7 @@
   "name": "Brain LLM",
   "id": "brain-llm",
   "role": "primary-ai-engine",
-  "version": "0.1.8",
+  "version": "0.1.11",
   "defaultProvider": "ollama",
   "backend": {
     "type": "ollama-compatible",
