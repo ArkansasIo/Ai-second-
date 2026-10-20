@@ -24,105 +24,24 @@ const initialBrowserTabs: BrowserTab[] = [
 function apiBase(): string {
   return (window.localStorage.getItem('ai-second-brain.apiBase') || 'http://127.0.0.1:8787').replace(/\/$/, '');
 }
-
-async function postChat(model: string, message: string): Promise<string> {
-  const response = await fetch(`${apiBase()}/api/ollama/chat`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({ model, message })
-  });
-  if (!response.ok) throw new Error(`Local API returned ${response.status}`);
-  const data = await response.json() as { response?: string; message?: { content?: string } };
-  return data.response || data.message?.content || 'The local model returned no text.';
-}
-
-async function loadModels(): Promise<string[]> {
-  const response = await fetch(`${apiBase()}/api/ollama/models`);
-  if (!response.ok) throw new Error(`Local API returned ${response.status}`);
-  const data = await response.json() as { models?: Array<{ name: string }> };
-  return (data.models || []).map(model => model.name).filter(Boolean);
-}
+async function postChat(model: string, message: string): Promise<string> { const response = await fetch(`${apiBase()}/api/ollama/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ model, message }) }); if (!response.ok) throw new Error(`Local API returned ${response.status}`); const data = await response.json() as { response?: string; message?: { content?: string } }; return data.response || data.message?.content || 'The local model returned no text.'; }
+async function loadModels(): Promise<string[]> { const response = await fetch(`${apiBase()}/api/ollama/models`); if (!response.ok) throw new Error(`Local API returned ${response.status}`); const data = await response.json() as { models?: Array<{ name: string }> }; return (data.models || []).map(model => model.name).filter(Boolean); }
 
 function App() {
-  const [active, setActive] = useState('Projects');
-  const [workshop, setWorkshop] = useState(workshops[0]);
-  const [model, setModel] = useState('');
-  const [models, setModels] = useState<string[]>([]);
-  const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState<string[]>(['Welcome to AI Second Brain. Connect your local API and Ollama to use live AI.']);
-  const [channel, setChannel] = useState(() => localStorage.getItem('ai-second-brain.channel') || 'gold');
-  const [apiStatus, setApiStatus] = useState<'local' | 'offline'>('offline');
-  const [busy, setBusy] = useState(false);
-  const [update, setUpdate] = useState<UpdateInfo>({ channel: 'gold', version: `v${APP_VERSION}`, status: 'current', message: 'You are on the Gold channel.' });
-  const [checking, setChecking] = useState(false);
-  const [browserTabs, setBrowserTabs] = useState<BrowserTab[]>(initialBrowserTabs);
-  const [activeBrowserTab, setActiveBrowserTab] = useState('TAB-00001');
-
-  useEffect(() => {
-    localStorage.setItem('ai-second-brain.channel', channel);
-    setUpdate(current => ({ ...current, channel, message: `Update channel set to ${channel}.` }));
-  }, [channel]);
-
-  useEffect(() => {
-    let mounted = true;
-    loadModels().then(found => { if (mounted) { setModels(found); setModel(found[0] || 'qwen3'); setApiStatus('local'); } }).catch(() => { if (mounted) setApiStatus('offline'); });
-    return () => { mounted = false; };
-  }, []);
-
+  const [active, setActive] = useState('Projects'); const [workshop, setWorkshop] = useState(workshops[0]); const [model, setModel] = useState(''); const [models, setModels] = useState<string[]>([]); const [prompt, setPrompt] = useState(''); const [messages, setMessages] = useState<string[]>(['Welcome to AI Second Brain. Connect your local API and Ollama to use live AI.']); const [channel, setChannel] = useState(() => localStorage.getItem('ai-second-brain.channel') || 'gold'); const [apiStatus, setApiStatus] = useState<'local' | 'offline'>('offline'); const [busy, setBusy] = useState(false); const [update, setUpdate] = useState<UpdateInfo>({ channel: 'gold', version: `v${APP_VERSION}`, status: 'current', message: 'You are on the Gold channel.' }); const [checking, setChecking] = useState(false); const [browserTabs, setBrowserTabs] = useState<BrowserTab[]>(initialBrowserTabs); const [activeBrowserTab, setActiveBrowserTab] = useState('TAB-00001');
+  useEffect(() => { localStorage.setItem('ai-second-brain.channel', channel); setUpdate(current => ({ ...current, channel, message: `Update channel set to ${channel}.` })); }, [channel]);
+  useEffect(() => { let mounted = true; loadModels().then(found => { if (mounted) { setModels(found); setModel(found[0] || 'qwen3'); setApiStatus('local'); } }).catch(() => { if (mounted) setApiStatus('offline'); }); return () => { mounted = false; }; }, []);
   const graph = useMemo(() => [['Event', 'OnStart'], ['Data', 'Load Project'], ['Logic', 'Validate'], ['Function', 'Build'], ['Output', 'Result']], []);
-
-  async function send() {
-    const value = prompt.trim();
-    if (!value || busy) return;
-    setPrompt(''); setMessages(current => [...current, `You: ${value}`]); setBusy(true);
-    try {
-      const answer = await postChat(model || 'qwen3', value);
-      setMessages(current => [...current, `Agent: ${answer}`]);
-      setApiStatus('local');
-    } catch (error) {
-      setMessages(current => [...current, `System: ${error instanceof Error ? error.message : 'Local AI connection failed.'} Start the local API and Ollama, then try again.`]);
-      setApiStatus('offline');
-    } finally { setBusy(false); }
-  }
-
-  async function checkForUpdates() {
-    setChecking(true); setUpdate(current => ({ ...current, status: 'current', message: 'Checking release metadata…' }));
-    try {
-      const response = await fetch('https://api.github.com/repos/ArkansasIo/Ai-second-/releases', { headers: { Accept: 'application/vnd.github+json' } });
-      if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
-      const releases = await response.json() as Array<{ tag_name: string; prerelease: boolean; draft: boolean; name?: string }>;
-      const eligible = releases.find(release => !release.draft && (channel === 'gold' ? !release.prerelease : release.prerelease));
-      setUpdate(eligible ? { channel, version: eligible.tag_name, status: 'available', message: `${eligible.name || eligible.tag_name} is available for the ${channel} channel.` } : { channel, version: `v${APP_VERSION}`, status: 'current', message: `No published ${channel} update is available yet.` });
-    } catch (error) { setUpdate({ channel, version: `v${APP_VERSION}`, status: 'error', message: error instanceof Error ? `Update check unavailable: ${error.message}` : 'Update check unavailable.' }); }
-    finally { setChecking(false); }
-  }
-
-  function openBrowserTab() {
-    const id = `TAB-${String(browserTabs.length + 1).padStart(5, '0')}`;
-    const tab: BrowserTab = { id, title: 'New Tab', url: 'https://', icon: '+' };
-    setBrowserTabs(current => [...current, tab]);
-    setActiveBrowserTab(id);
-  }
-
-  function closeBrowserTab(id: string) {
-    if (browserTabs.length === 1) return;
-    const remaining = browserTabs.filter(tab => tab.id !== id);
-    setBrowserTabs(remaining);
-    if (activeBrowserTab === id) setActiveBrowserTab(remaining[Math.max(0, remaining.length - 1)].id);
-  }
-
-  function navigateBrowserTab(url: string) {
-    setBrowserTabs(current => current.map(tab => tab.id === activeBrowserTab ? { ...tab, url, title: url.replace(/^https?:\/\//, '').replace(/\/$/, '') || 'New Tab' } : tab));
-  }
-
-  const content = {
-    Projects: ['Projects', 'Your local projects and workspaces.'], Issues: ['Issues', 'Track bugs, tasks, priorities, and agent assignments.'], Code: ['Code', 'Repository files, branches, worktrees, and source changes.'], 'Pull Requests': ['Pull Requests', 'Review proposed changes before merging.'], Agents: ['Agents', 'Manage agent roles, models, permissions, and status.'], Actions: ['Actions', 'Build, test, package, and automation workflows.'], Roadmaps: ['Roadmaps', 'Plan milestones, deadlines, dependencies, and releases.'], Security: ['Security', 'Permissions, secrets, dependencies, and audit controls.'], Insights: ['Insights', 'Project health, workload, builds, tests, and resources.'], Releases: ['Releases', 'Versioned packages, release notes, checksums, and channels.'], Environments: ['Environments', 'Virtual development environments and toolchains.'], Blueprints: ['Blueprints', 'Visual programs and language-specific code generation.'], Extensions: ['Extensions', 'Installed IDE and application integrations.'], Terminal: ['Terminal', 'Command sessions for the active workshop environment.'], Memory: ['Memory', 'Project knowledge, conversations, and long-term context.'], GitHub: ['GitHub', 'Repository, issues, pull requests, actions, and release integration.']
-  } as Record<string, [string, string]>;
-  const section = content[active] || content.Projects;
-  const currentBrowserTab = browserTabs.find(tab => tab.id === activeBrowserTab) || browserTabs[0];
-
+  async function send() { const value = prompt.trim(); if (!value || busy) return; setPrompt(''); setMessages(current => [...current, `You: ${value}`]); setBusy(true); try { const answer = await postChat(model || 'qwen3', value); setMessages(current => [...current, `Agent: ${answer}`]); setApiStatus('local'); } catch (error) { setMessages(current => [...current, `System: ${error instanceof Error ? error.message : 'Local AI connection failed.'} Start the local API and Ollama, then try again.`]); setApiStatus('offline'); } finally { setBusy(false); } }
+  async function checkForUpdates() { setChecking(true); setUpdate(current => ({ ...current, status: 'current', message: 'Checking release metadata…' })); try { const response = await fetch('https://api.github.com/repos/ArkansasIo/Ai-second-/releases', { headers: { Accept: 'application/vnd.github+json' } }); if (!response.ok) throw new Error(`GitHub returned ${response.status}`); const releases = await response.json() as Array<{ tag_name: string; prerelease: boolean; draft: boolean; name?: string }>; const eligible = releases.find(release => !release.draft && (channel === 'gold' ? !release.prerelease : release.prerelease)); setUpdate(eligible ? { channel, version: eligible.tag_name, status: 'available', message: `${eligible.name || eligible.tag_name} is available for the ${channel} channel.` } : { channel, version: `v${APP_VERSION}`, status: 'current', message: `No published ${channel} update is available yet.` }); } catch (error) { setUpdate({ channel, version: `v${APP_VERSION}`, status: 'error', message: error instanceof Error ? `Update check unavailable: ${error.message}` : 'Update check unavailable.' }); } finally { setChecking(false); } }
+  function openBrowserTab() { const id = `TAB-${String(browserTabs.length + 1).padStart(5, '0')}`; const tab: BrowserTab = { id, title: 'New Tab', url: 'https://', icon: '+' }; setBrowserTabs(current => [...current, tab]); setActiveBrowserTab(id); }
+  function closeBrowserTab(id: string) { if (browserTabs.length === 1) return; const remaining = browserTabs.filter(tab => tab.id !== id); setBrowserTabs(remaining); if (activeBrowserTab === id) setActiveBrowserTab(remaining[Math.max(0, remaining.length - 1)].id); }
+  function navigateBrowserTab(url: string) { setBrowserTabs(current => current.map(tab => tab.id === activeBrowserTab ? { ...tab, url, title: url.replace(/^https?:\/\//, '').replace(/\/$/, '') || 'New Tab' } : tab)); }
+  const content = { Projects: ['Projects', 'Your local projects and workspaces.'], Issues: ['Issues', 'Track bugs, tasks, priorities, and agent assignments.'], Code: ['Code', 'Repository files, branches, worktrees, and source changes.'], 'Pull Requests': ['Pull Requests', 'Review proposed changes before merging.'], Agents: ['Agents', 'Manage agent roles, models, permissions, and status.'], Actions: ['Actions', 'Build, test, package, and automation workflows.'], Roadmaps: ['Roadmaps', 'Plan milestones, deadlines, dependencies, and releases.'], Security: ['Security', 'Permissions, secrets, dependencies, and audit controls.'], Insights: ['Insights', 'Project health, workload, builds, tests, and resources.'], Releases: ['Releases', 'Versioned packages, release notes, checksums, and channels.'], Environments: ['Environments', 'Virtual development environments and toolchains.'], Blueprints: ['Blueprints', 'Visual programs and language-specific code generation.'], Extensions: ['Extensions', 'Installed IDE and application integrations.'], Terminal: ['Terminal', 'Command sessions for the active workshop environment.'], Memory: ['Memory', 'Project knowledge, conversations, and long-term context.'], GitHub: ['GitHub', 'Repository, issues, pull requests, actions, and release integration.'] } as Record<string, [string, string]>;
+  const section = content[active] || content.Projects; const currentBrowserTab = browserTabs.find(tab => tab.id === activeBrowserTab) || browserTabs[0];
   return <div className="app">
-    <header className="topbar"><div className="brand">AI SECOND BRAIN <span>Professional</span></div><div className={apiStatus === 'local' ? 'status online' : 'status'}>● {apiStatus === 'local' ? `Ollama Local${model ? ` · ${model}` : ''}` : 'Local API Offline'}</div><div className="version">v{APP_VERSION}</div><button className="updateButton" onClick={checkForUpdates} disabled={checking}>{checking ? 'Checking…' : 'Check for Updates'}</button></header>
-    <div className="browserBar"><button className="browserControl" onClick={() => window.history.back()} aria-label="Back">←</button><button className="browserControl" onClick={() => window.history.forward()} aria-label="Forward">→</button><button className="browserControl" onClick={() => window.location.reload()} aria-label="Reload">↻</button><div className="browserTabs">{browserTabs.map(tab => <button key={tab.id} className={tab.id === activeBrowserTab ? 'browserTab selected' : 'browserTab'} onClick={() => setActiveBrowserTab(tab.id)}><span>{tab.icon}</span>{tab.title}<b onClick={event => { event.stopPropagation(); closeBrowserTab(tab.id); }}>×</b></button>)}<button className="browserNew" onClick={openBrowserTab}>+</button></div><input className="addressBar" value={currentBrowserTab.url} onChange={event => navigateBrowserTab(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') navigateBrowserTab(event.currentTarget.value); }} aria-label="Address bar" /></div>
+    <header className="topbar"><div className="brand">AI SECOND BRAIN <span>Professional</span></div><div className="ctobar"><button onClick={() => setActive('Projects')}>Command Center</button><button onClick={() => setActive('Agents')}>Agents</button><button onClick={() => setActive('Actions')}>Run</button><button onClick={() => setActive('Insights')}>Monitor</button></div><div className={apiStatus === 'local' ? 'status online' : 'status'}>● {apiStatus === 'local' ? `Ollama Local${model ? ` · ${model}` : ''}` : 'Local API Offline'}</div><div className="version">v{APP_VERSION}</div><button className="updateButton" onClick={checkForUpdates} disabled={checking}>{checking ? 'Checking…' : 'Check for Updates'}</button></header>
+    <div className="browserBar"><button className="browserControl" onClick={() => window.history.back()}>←</button><button className="browserControl" onClick={() => window.history.forward()}>→</button><button className="browserControl" onClick={() => window.location.reload()}>↻</button><div className="browserTabs">{browserTabs.map(tab => <button key={tab.id} className={tab.id === activeBrowserTab ? 'browserTab selected' : 'browserTab'} onClick={() => setActiveBrowserTab(tab.id)}><span>{tab.icon}</span>{tab.title}<b onClick={event => { event.stopPropagation(); closeBrowserTab(tab.id); }}>×</b></button>)}<button className="browserNew" onClick={openBrowserTab}>+</button></div><input className="addressBar" value={currentBrowserTab.url} onChange={event => navigateBrowserTab(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') navigateBrowserTab(event.currentTarget.value); }} aria-label="Address bar" /></div>
     <div className="body"><aside className="sidebar"><button className="new" onClick={() => setActive('Projects')}>+ New Workshop</button>{nav.map(item => <button key={item} className={active === item ? 'nav active' : 'nav'} onClick={() => setActive(item)}>{item}</button>)}<div className="sidebarFoot"><button className="nav" onClick={() => setActive('GitHub')}>Account</button><button className="nav" onClick={() => setActive('Security')}>Settings</button></div></aside>
       <main className="workspace"><div className="workshopTabs">{workshops.map(w => <button key={w.id} className={w.id === workshop.id ? 'tab selected' : 'tab'} onClick={() => setWorkshop(w)}>{w.name}<small>{w.environment}</small></button>)}</div>
         <section className="hero"><div><div className="eyebrow">{active.toUpperCase()}</div><h1>{active === 'Projects' ? workshop.name : section[0]}</h1><p>{active === 'Projects' ? `${workshop.id} · ${workshop.environment} environment · ${workshop.agents} agents` : section[1]}</p></div><select value={model} onChange={e => setModel(e.target.value)} disabled={!models.length}><option value="">{models.length ? 'Select Ollama model' : 'Ollama model unavailable'}</option>{models.map(item => <option key={item} value={item}>{item}</option>)}</select></section>
@@ -133,5 +52,4 @@ function App() {
         <section className="chat panel"><div className="panelTitle">AI Chat <span>{apiStatus === 'local' ? 'LIVE LOCAL AI' : 'OFFLINE / DEMO'}</span></div><div className="messages">{messages.map((m, i) => <div key={i}>{m}</div>)}</div><div className="composer"><input value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Ask your agents or describe a program..." disabled={busy}/><button onClick={send} disabled={busy || !prompt.trim()}>{busy ? 'Working…' : 'Send'}</button></div></section>
       </main></div></div>;
 }
-
 createRoot(document.getElementById('root')!).render(<App />);
