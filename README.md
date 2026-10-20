@@ -3,7 +3,7 @@
 **Professional Edition — Prototype**
 
 Developer: ArkansasIo
-Version: 0.1.1
+Version: 0.1.6
 Year: 2026
 
 AI-native development and knowledge environment combining persistent project memory, AI agent teams, UML/Blueprint design, documentation, source code, Git/GitHub integration, and offline/local operation.
@@ -19,6 +19,16 @@ AI-native development and knowledge environment combining persistent project mem
 - GitHub repository integration
 - Local/offline-first architecture
 - Approval-based file, commit, and push workflow
+
+## Current Foundation
+
+- Binder-style folder workspace with document tree
+- Program Studio for code, canvas, whiteboard, and drafting
+- BrainScript OOP language contracts
+- Local Ollama/API integration
+- Responsive desktop, tablet, and mobile layout
+- GitHub Pages deployment workflow
+- Release/version metadata and licensing policy records
 
 ## Planned Applications
 
@@ -40,8 +50,9 @@ uml/         UML and architecture sources
 tests/       Automated tests
 workers/     Background jobs and agent workers
 cron/        Scheduled maintenance
+src/         Web application source and feature modules
 ```
 
 ## License
 
-License selection is configurable and will be finalized before the first public release.
+The project license remains pending final selection. See `LICENSE` and `docs/licensing/LICENSE-POLICY.md`.
