@@ -1,13 +1,15 @@
-# AI Second Brain 0.1.6
+# AI Second Brain 0.1.8
 
 ## Release state
 
 - Prototype release channel: Gold metadata remains configurable.
-- Version metadata is synchronized to `0.1.6`.
+- Version metadata is synchronized to `0.1.8`.
+- **Brain LLM** is now the canonical main AI/LLM engine.
+- Ollama remains the default local inference backend for Brain LLM.
+- New API routes: `/api/brain-llm/models` and `/api/brain-llm/chat`.
+- Legacy `/api/ollama/*` routes remain compatibility aliases.
 - License remains pending final open-source/source-available selection.
-- License policy and release licensing record are included under `docs/licensing/`.
-- GitHub Pages installation is switched to `npm install` until a lockfile is committed, preventing `npm ci` from failing on this prototype.
 
 ## Development scope
 
-This release continues the binder-first Program Studio, BrainScript language contracts, local-first AI architecture, and responsive workspace foundation.
+This release establishes the Brain LLM application layer, provider contract, Ollama adapter, primary configuration, API routing, product identity, and documentation.
