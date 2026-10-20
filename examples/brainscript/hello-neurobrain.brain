@@ -1,0 +1,22 @@
+application HelloNeuroBrain {
+    const name: string = "NeuroBrain";
+    let score: number = 40 + 2;
+
+    function greet(who: string): string {
+        return "Hello, " + who;
+    }
+
+    task Prepare {
+        score = score + 8;
+        say(greet(name));
+    }
+
+    task Verify {
+        verify("score is above the launch threshold");
+    }
+
+    workflow Launch {
+        Prepare;
+        Verify;
+    }
+}
