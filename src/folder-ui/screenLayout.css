@@ -1,0 +1,39 @@
+/* Responsive workspace sizing: keep the folder, tree, toolbar, and work panels inside the viewport. */
+html,body,#root{width:100%;min-width:0;min-height:100%;margin:0}
+*{box-sizing:border-box}
+.app{width:100%;min-height:100dvh;overflow-x:hidden}
+.body{display:flex;min-width:0;width:100%;height:calc(100dvh - var(--topbar-height,104px));overflow:hidden}
+.workspace{flex:1 1 auto;width:auto;min-width:0;max-width:100%;min-height:0;overflow:auto;overscroll-behavior:contain}
+.workspace>*{max-width:100%}
+.workspace img,.workspace canvas,.workspace video,.workspace iframe{max-width:100%;height:auto}
+.workshopTabs,.hero,.panel,.card{min-width:0;max-width:100%}
+.designed-page,.designed-page__grid,.designed-page__header,.designed-page__toolbar{min-width:0;max-width:100%}
+.designed-page__grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));overflow:visible}
+.designed-page__actions{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}
+.designed-page__toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.page-id{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+
+@media (max-width:1200px){
+  .body{height:calc(100dvh - var(--topbar-height,96px))}
+  .workspace{margin:16px 12px 18px}
+}
+@media (max-width:900px){
+  .body{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - var(--topbar-height,96px));overflow:visible}
+  .workspace{order:2;width:calc(100% - 14px);margin:18px 7px 14px;max-height:none;overflow:visible}
+  .workspace .workshopTabs{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+  .document-tree{order:1;flex:0 0 auto}
+}
+@media (max-width:600px){
+  .workspace{width:calc(100% - 10px);margin:17px 5px 10px;border-radius:5px 11px 11px 11px}
+  .workspace .workshopTabs{padding-left:6px;padding-right:6px}
+  .designed-page__header{display:flex;flex-direction:column;gap:12px}
+  .designed-page__actions{width:100%}
+  .designed-page__actions button{flex:1 1 auto;min-height:40px}
+  .designed-page__toolbar{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+  .designed-page__toolbar button{min-height:38px;white-space:nowrap}
+}
+@media (max-width:380px){
+  .workspace{width:calc(100% - 6px);margin-left:3px;margin-right:3px}
+  .designed-page__grid{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
