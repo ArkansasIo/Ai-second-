@@ -8,7 +8,7 @@ import {auditLog} from './ai/auditLog';
 import './styles.css';
 import './workspace-ui/workspace-manager.css';
 type UpdateState={version:string;status:'current'|'available'|'error';message:string};
-const APP_VERSION='0.1.14';
+const APP_VERSION='0.1.15';
 const nav=['Projects','Issues','Code','Pull Requests','Agents','Actions','Roadmaps','Security','Insights','Releases','Environments','Blueprints','Extensions','Terminal','Memory','GitHub'];
 const channels=['pre-alpha','alpha','pre-beta','beta','gold'];
 function apiBase(){return(localStorage.getItem('ai-second-brain.apiBase')||'http://127.0.0.1:8787').replace(/\/$/,'')}
