@@ -2,7 +2,7 @@
 
 ## Current status
 
-Version 0.1.8 remains a development prototype. The repository does **not** grant a final open-source or source-available license yet.
+Version 0.1.9 remains a development prototype. The repository does **not** grant a final open-source or source-available license yet.
 
 The root `LICENSE` file is intentionally marked as pending. Do not assume that source files may be redistributed, relicensed, or incorporated into another product solely because the repository is public.
 
