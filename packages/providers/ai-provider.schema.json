@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Second Brain Provider",
+  "type": "object",
+  "required": ["id", "name", "kind", "endpoint", "credentialMode"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^PROVIDER-[0-9]{5}$" },
+    "name": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["ollama", "openai", "deepseek", "anthropic", "google", "openai-compatible", "custom"] },
+    "endpoint": { "type": "string", "format": "uri" },
+    "credentialMode": { "enum": ["local", "api-key", "oauth", "none"] },
+    "apiKeyRef": { "type": ["string", "null"] },
+    "enabled": { "type": "boolean", "default": true },
+    "models": { "type": "array", "items": { "type": "string" } },
+    "allowRemote": { "type": "boolean", "default": false },
+    "streaming": { "type": "boolean", "default": true }
+  },
+  "additionalProperties": false
+}
