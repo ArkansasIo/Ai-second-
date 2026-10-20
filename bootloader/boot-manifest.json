@@ -1,8 +1,8 @@
 {
   "product": "AI Second Brain",
   "edition": "Professional",
-  "version": "0.1.0",
-  "bootloaderVersion": "0.1.0",
+  "version": "0.1.1",
+  "bootloaderVersion": "0.1.1",
   "defaultMode": "local",
   "updateChannels": ["stable", "beta", "development"],
   "startupChecks": [
