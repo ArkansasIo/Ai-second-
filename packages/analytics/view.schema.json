@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-second-brain.local/schemas/view.schema.json",
+  "title": "AI Second Brain Analytics View",
+  "type": "object",
+  "required": ["id", "type", "title", "source", "metrics"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^VIEW-[0-9]{5}$"},
+    "type": {"enum": ["grid", "bar", "line", "pie", "scatter"]},
+    "title": {"type": "string"},
+    "source": {"type": "string"},
+    "groupBy": {"type": ["string", "null"]},
+    "metrics": {"type": "array", "items": {"type": "string"}},
+    "filters": {"type": "object", "additionalProperties": true},
+    "refreshSeconds": {"type": "integer", "minimum": 0}
+  },
+  "additionalProperties": false
+}
