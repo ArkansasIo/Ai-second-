@@ -88,14 +88,36 @@ function App() {
     finally { setChecking(false); }
   }
 
+  const content = {
+    Projects: ['Projects', 'Your local projects and workspaces.'],
+    Issues: ['Issues', 'Track bugs, tasks, priorities, and agent assignments.'],
+    Code: ['Code', 'Repository files, branches, worktrees, and source changes.'],
+    'Pull Requests': ['Pull Requests', 'Review proposed changes before merging.'],
+    Agents: ['Agents', 'Manage agent roles, models, permissions, and status.'],
+    Actions: ['Actions', 'Build, test, package, and automation workflows.'],
+    Roadmaps: ['Roadmaps', 'Plan milestones, deadlines, dependencies, and releases.'],
+    Security: ['Security', 'Permissions, secrets, dependencies, and audit controls.'],
+    Insights: ['Insights', 'Project health, workload, builds, tests, and resources.'],
+    Releases: ['Releases', 'Versioned packages, release notes, checksums, and channels.'],
+    Environments: ['Environments', 'Virtual development environments and toolchains.'],
+    Blueprints: ['Blueprints', 'Visual programs and language-specific code generation.'],
+    Extensions: ['Extensions', 'Installed IDE and application integrations.'],
+    Terminal: ['Terminal', 'Command sessions for the active workshop environment.'],
+    Memory: ['Memory', 'Project knowledge, conversations, and long-term context.'],
+    GitHub: ['GitHub', 'Repository, issues, pull requests, actions, and release integration.']
+  } as Record<string, [string, string]>;
+
+  const section = content[active] || content.Projects;
+
   return <div className="app">
     <header className="topbar"><div className="brand">AI SECOND BRAIN <span>Professional</span></div><div className={apiStatus === 'local' ? 'status online' : 'status'}>● {apiStatus === 'local' ? `Ollama Local${model ? ` · ${model}` : ''}` : 'Local API Offline'}</div><div className="version">v{APP_VERSION}</div><button className="updateButton" onClick={checkForUpdates} disabled={checking}>{checking ? 'Checking…' : 'Check for Updates'}</button></header>
-    <div className="body"><aside className="sidebar"><button className="new">+ New Workshop</button>{nav.map(item => <button key={item} className={active === item ? 'nav active' : 'nav'} onClick={() => setActive(item)}>{item}</button>)}<div className="sidebarFoot">Account<br/>Settings</div></aside>
+    <div className="body"><aside className="sidebar"><button className="new" onClick={() => setActive('Projects')}>+ New Workshop</button>{nav.map(item => <button key={item} className={active === item ? 'nav active' : 'nav'} onClick={() => setActive(item)}>{item}</button>)}<div className="sidebarFoot"><button className="nav" onClick={() => setActive('GitHub')}>Account</button><button className="nav" onClick={() => setActive('Security')}>Settings</button></div></aside>
       <main className="workspace"><div className="workshopTabs">{workshops.map(w => <button key={w.id} className={w.id === workshop.id ? 'tab selected' : 'tab'} onClick={() => setWorkshop(w)}>{w.name}<small>{w.environment}</small></button>)}</div>
-        <section className="hero"><div><div className="eyebrow">{active.toUpperCase()}</div><h1>{workshop.name}</h1><p>{workshop.id} · {workshop.environment} environment · {workshop.agents} agents</p></div><select value={model} onChange={e => setModel(e.target.value)} disabled={!models.length}><option value="">{models.length ? 'Select Ollama model' : 'Ollama model unavailable'}</option>{models.map(item => <option key={item} value={item}>{item}</option>)}</select></section>
+        <section className="hero"><div><div className="eyebrow">{active.toUpperCase()}</div><h1>{active === 'Projects' ? workshop.name : section[0]}</h1><p>{active === 'Projects' ? `${workshop.id} · ${workshop.environment} environment · ${workshop.agents} agents` : section[1]}</p></div><select value={model} onChange={e => setModel(e.target.value)} disabled={!models.length}><option value="">{models.length ? 'Select Ollama model' : 'Ollama model unavailable'}</option>{models.map(item => <option key={item} value={item}>{item}</option>)}</select></section>
+        {active !== 'Projects' && <section className="panel sectionPlaceholder"><div className="panelTitle">{section[0]}</div><p>{section[1]}</p><p className="panelFooter">This workspace is connected to {workshop.name} · {workshop.environment}.</p></section>}
         <section className="updatePanel panel"><div className="panelTitle">Release & Updates <span className={`updateState ${update.status}`}>{update.status.toUpperCase()}</span></div><div className="updateControls"><label>Channel <select value={channel} onChange={e => setChannel(e.target.value)}>{releaseChannels.map(item => <option key={item} value={item}>{item === 'gold' ? 'Gold (Stable)' : item.replace('-', ' ')}</option>)}</select></label><span className="updateMessage">{update.message}</span><span className="updateVersion">{update.version}</span></div></section>
         <section className="cards"><div className="card"><b>Project</b><strong>Prototype</strong><span>42 tasks · 68% planned</span></div><div className="card"><b>Agents</b><strong>{workshop.agents} active</strong><span>Parallel cluster ready</span></div><div className="card"><b>Build</b><strong>Ready</strong><span>Compiler environment detected</span></div><div className="card"><b>Browser</b><strong>Responsive</strong><span>Phone · iPad · Desktop</span></div></section>
-        <section className="contentGrid"><div className="panel blueprint"><div className="panelTitle">Universal Blueprint <button>+ Node</button></div><div className="graph">{graph.map(([kind, label], i) => <React.Fragment key={label}><div className="node"><small>{kind}</small><b>{label}</b><i>●</i></div>{i < graph.length - 1 && <div className="wire">→</div>}</React.Fragment>)}</div><div className="panelFooter">Target: {workshop.environment} · C++ / Python / Rust / TypeScript adapters</div></div><div className="panel cluster"><div className="panelTitle">Agent Cluster <span>PARALLEL</span></div>{Array.from({ length: workshop.agents }, (_, i) => <div className="agent" key={i}><span className="dot"/> AGENT-{String(i + 1).padStart(5, '0')} <small>{['Architect','Coder','Researcher','QA','Documentation'][i % 5]}</small></div>)}</div></section>
+        <section className="contentGrid"><div className="panel blueprint"><div className="panelTitle">Universal Blueprint <button onClick={() => setActive('Blueprints')}>+ Node</button></div><div className="graph">{graph.map(([kind, label], i) => <React.Fragment key={label}><div className="node"><small>{kind}</small><b>{label}</b><i>●</i></div>{i < graph.length - 1 && <div className="wire">→</div>}</React.Fragment>)}</div><div className="panelFooter">Target: {workshop.environment} · C++ / Python / Rust / TypeScript adapters</div></div><div className="panel cluster"><div className="panelTitle">Agent Cluster <span>PARALLEL</span></div>{Array.from({ length: workshop.agents }, (_, i) => <div className="agent" key={i}><span className="dot"/> AGENT-{String(i + 1).padStart(5, '0')} <small>{['Architect','Coder','Researcher','QA','Documentation'][i % 5]}</small></div>)}</div></section>
         <section className="chat panel"><div className="panelTitle">AI Chat <span>{apiStatus === 'local' ? 'LIVE LOCAL AI' : 'OFFLINE / DEMO'}</span></div><div className="messages">{messages.map((m, i) => <div key={i}>{m}</div>)}</div><div className="composer"><input value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Ask your agents or describe a program..." disabled={busy}/><button onClick={send} disabled={busy || !prompt.trim()}>{busy ? 'Working…' : 'Send'}</button></div></section>
       </main></div></div>;
 }
