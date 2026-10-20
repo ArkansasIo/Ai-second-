@@ -1,0 +1,21 @@
+{
+  "name": "ai-second-brain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI Second Brain local-first prototype",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "typescript": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "vitest": "latest"
+  }
+}
