@@ -1,0 +1,71 @@
+{
+  "version": "0.1.1",
+  "providers": [
+    {
+      "id": "PROVIDER-00001",
+      "name": "Ollama Local",
+      "kind": "ollama",
+      "endpoint": "http://127.0.0.1:11434",
+      "credentialMode": "none",
+      "apiKeyRef": null,
+      "enabled": true,
+      "models": [],
+      "allowRemote": false,
+      "streaming": true
+    },
+    {
+      "id": "PROVIDER-00002",
+      "name": "OpenAI",
+      "kind": "openai",
+      "endpoint": "https://api.openai.com/v1",
+      "credentialMode": "api-key",
+      "apiKeyRef": "secret://providers/openai/api-key",
+      "enabled": false,
+      "models": [],
+      "allowRemote": true,
+      "streaming": true
+    },
+    {
+      "id": "PROVIDER-00003",
+      "name": "DeepSeek",
+      "kind": "deepseek",
+      "endpoint": "https://api.deepseek.com",
+      "credentialMode": "api-key",
+      "apiKeyRef": "secret://providers/deepseek/api-key",
+      "enabled": false,
+      "models": [],
+      "allowRemote": true,
+      "streaming": true
+    },
+    {
+      "id": "PROVIDER-00004",
+      "name": "Anthropic",
+      "kind": "anthropic",
+      "endpoint": "https://api.anthropic.com",
+      "credentialMode": "api-key",
+      "apiKeyRef": "secret://providers/anthropic/api-key",
+      "enabled": false,
+      "models": [],
+      "allowRemote": true,
+      "streaming": true
+    },
+    {
+      "id": "PROVIDER-00005",
+      "name": "Google AI",
+      "kind": "google",
+      "endpoint": "https://generativelanguage.googleapis.com",
+      "credentialMode": "api-key",
+      "apiKeyRef": "secret://providers/google/api-key",
+      "enabled": false,
+      "models": [],
+      "allowRemote": true,
+      "streaming": true
+    }
+  ],
+  "policy": {
+    "defaultProvider": "PROVIDER-00001",
+    "remoteProvidersRequireExplicitEnable": true,
+    "neverStoreSecretsInSource": true,
+    "neverExposeSecretsToBrowser": true
+  }
+}
