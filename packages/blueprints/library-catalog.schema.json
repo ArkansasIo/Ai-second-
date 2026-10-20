@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-second-brain.local/schemas/blueprint-library-catalog.schema.json",
+  "title": "Universal Blueprint Library Catalog",
+  "type": "object",
+  "required": ["version", "languages", "categories", "nodes"],
+  "properties": {
+    "version": { "type": "string" },
+    "languages": { "type": "array", "items": { "$ref": "#/$defs/language" } },
+    "categories": { "type": "array", "items": { "type": "string" } },
+    "nodes": { "type": "array", "items": { "$ref": "#/$defs/node" } }
+  },
+  "$defs": {
+    "language": {
+      "type": "object",
+      "required": ["id", "name", "family", "adapter"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "family": { "type": "string" },
+        "adapter": { "type": "string" },
+        "compilers": { "type": "array", "items": { "type": "string" } },
+        "packageManagers": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "name", "category", "kind", "inputs", "outputs", "targets"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^LIBNODE-[0-9]{6}$" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "kind": { "enum": ["event", "function", "operator", "control", "data", "async", "io", "system", "ai", "build", "debug", "custom"] },
+        "description": { "type": "string" },
+        "inputs": { "type": "array", "items": { "$ref": "#/$defs/pin" } },
+        "outputs": { "type": "array", "items": { "$ref": "#/$defs/pin" } },
+        "targets": { "type": "array", "items": { "type": "string" } },
+        "aliases": { "type": "array", "items": { "type": "string" } },
+        "generator": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "pin": {
+      "type": "object",
+      "required": ["name", "type", "direction"],
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "direction": { "enum": ["input", "output"] },
+        "optional": { "type": "boolean" },
+        "default": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
