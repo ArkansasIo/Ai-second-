@@ -1,0 +1,4 @@
+import {compileBrainScript} from './compiler';
+export interface RuntimeContext{variables:Record<string,unknown>;log:(message:string)=>void;}
+export class BrainScriptRuntime{constructor(public readonly context:RuntimeContext={variables:{},log:console.log}){} run(source:string,name='Main'){const result=compileBrainScript(source,name);if(!result.success)throw new Error(result.diagnostics.filter(d=>d.severity==='error').map(d=>`${d.line}:${d.column} ${d.message}`).join('\n'));for(const variable of result.program.variables)this.context.variables[variable.name]=parseLiteral(variable.value);return result.program;}}
+function parseLiteral(value:string){if(value==='true')return true;if(value==='false')return false;if(value==='null'||!value)return null;if(!Number.isNaN(Number(value)))return Number(value);return value.replace(/^['"]|['"]$/g,'');}
