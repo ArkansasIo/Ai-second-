@@ -2,7 +2,7 @@
   "name": "NeuroBrain — Brain LLM Engine",
   "id": "neurobrain",
   "role": "primary-ai-engine",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "defaultProvider": "ollama",
   "architecture": {
     "executive": "prefrontal",
