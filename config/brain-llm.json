@@ -1,15 +1,30 @@
 {
-  "name": "Brain LLM",
-  "id": "brain-llm",
+  "name": "NeuroBrain — Brain LLM Engine",
+  "id": "neurobrain",
   "role": "primary-ai-engine",
-  "version": "0.1.11",
+  "version": "0.1.14",
   "defaultProvider": "ollama",
+  "architecture": {
+    "executive": "prefrontal",
+    "routing": "thalamus",
+    "reasoning": "cortex",
+    "memory": "hippocampus",
+    "risk": "amygdala",
+    "action": "basal-ganglia",
+    "optimization": "cerebellum",
+    "runtime": "brainstem",
+    "coordination": "corpus-callosum",
+    "regulation": "hypothalamus"
+  },
   "backend": {
     "type": "ollama-compatible",
-    "baseUrl": "http://127.0.0.1:11434"
+    "baseUrl": "http://127.0.0.1:11434",
+    "streamingReady": true,
+    "toolCalling": true,
+    "structuredOutput": true
   },
   "providers": ["ollama", "external-api", "future-local-runtime"],
-  "capabilities": ["chat", "reasoning", "agent-orchestration", "tool-use", "memory", "coding", "research", "math", "search"],
+  "capabilities": ["chat", "reasoning", "agent-orchestration", "tool-use", "parallel-tools", "memory", "coding", "research", "math", "search", "planning", "verification", "recovery", "model-routing"],
   "compatibility": {
     "legacyOllamaEndpoints": true,
     "legacyAiNaming": "compatibility-only"
