@@ -1,6 +1,6 @@
 {
   "name": "ai-second-brain",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "private": true,
   "description": "AI Second Brain local-first application with Brain LLM as the primary AI engine",
   "main": "electron/main.cjs",
