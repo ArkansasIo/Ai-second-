@@ -1,6 +1,6 @@
 {
   "name": "ai-second-brain",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "private": true,
   "description": "AI Binder local-first application with NeuroBrain, Brain LLM, Ollama inference, and the BrainScript programming language",
   "main": "electron/main.cjs",
