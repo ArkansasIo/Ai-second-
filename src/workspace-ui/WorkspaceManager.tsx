@@ -1,6 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {workspaceStore} from '../core/store';
 import type {DocumentModel, FolderModel, WorkspaceState} from '../core/model';
+import {FeaturePanels} from '../ui/FeaturePanels';
+import {WorkspaceActions} from './WorkspaceActions';
 
 export function WorkspaceManager(){
  const [state,setState]=useState<WorkspaceState|null>(null);
@@ -17,14 +19,18 @@ export function WorkspaceManager(){
  const undo=()=>{if(workspaceStore.undo())refresh();}; const redo=()=>{if(workspaceStore.redo())refresh();};
  if(!ready||!state)return <section className="panel"><div className="panelTitle">Workspace</div><p>Loading persistent workspace…</p></section>;
  const doc=documents.find(d=>d.id===selectedDocument);
- return <section className="workspaceManager panel">
-  <div className="panelTitle"><span>Workspace Manager</span><span>{state.workspace.name}</span></div>
-  <div className="workspaceToolbar"><button onClick={addFolder}>+ Folder</button><button onClick={addDocument}>+ Document</button><button onClick={undo}>Undo</button><button onClick={redo}>Redo</button></div>
-  <div className="workspaceColumns">
-   <div className="workspaceTree"><Tree folders={folders} documents={documents} parentId={state.workspace.rootFolderId} selectedFolder={selectedFolder} selectedDocument={selectedDocument} setSelectedFolder={setSelectedFolder} setSelectedDocument={setSelectedDocument}/></div>
-   <div className="workspaceEditor">{doc?<DocumentEditor doc={doc} onChange={(patch)=>{workspaceStore.updateDocument(doc.id,patch);refresh();}}/>:<div className="emptyState">Select a document from the workspace tree.</div>}</div>
-  </div>
- </section>;
+ return <>
+  <section className="workspaceManager panel">
+   <div className="panelTitle"><span>Workspace Manager</span><span>{state.workspace.name}</span></div>
+   <div className="workspaceToolbar"><button onClick={addFolder}>+ Folder</button><button onClick={addDocument}>+ Document</button><button onClick={undo}>Undo</button><button onClick={redo}>Redo</button></div>
+   <WorkspaceActions onChange={refresh}/>
+   <div className="workspaceColumns">
+    <div className="workspaceTree"><Tree folders={folders} documents={documents} parentId={state.workspace.rootFolderId} selectedFolder={selectedFolder} selectedDocument={selectedDocument} setSelectedFolder={setSelectedFolder} setSelectedDocument={setSelectedDocument}/></div>
+    <div className="workspaceEditor">{doc?<DocumentEditor doc={doc} onChange={(patch)=>{workspaceStore.updateDocument(doc.id,patch);refresh();}}/>:<div className="emptyState">Select a document from the workspace tree.</div>}</div>
+   </div>
+  </section>
+  <FeaturePanels/>
+ </>;
 }
 
 function Tree({folders,documents,parentId,selectedFolder,selectedDocument,setSelectedFolder,setSelectedDocument}:{folders:FolderModel[];documents:DocumentModel[];parentId?:string;selectedFolder:string;selectedDocument:string;setSelectedFolder:(id:string)=>void;setSelectedDocument:(id:string)=>void}){
