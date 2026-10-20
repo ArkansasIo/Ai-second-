@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title>AI Second Brain</title>
+  <desc>AI Second Brain neural knowledge logo</desc>
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+  <path d="M256 88c-91 0-164 70-164 157 0 63 39 109 92 133v52h144v-52c53-24 92-70 92-133 0-87-73-157-164-157Z" fill="none" stroke="#168AC0" stroke-width="24" stroke-linejoin="round"/>
+  <path d="M204 205c26-38 78-38 104 0M190 264c37-34 95-34 132 0M210 326c28-20 64-20 92 0" fill="none" stroke="#17212B" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="204" cy="205" r="12" fill="#168AC0"/>
+  <circle cx="308" cy="205" r="12" fill="#168AC0"/>
+  <circle cx="190" cy="264" r="12" fill="#168AC0"/>
+  <circle cx="322" cy="264" r="12" fill="#168AC0"/>
+  <circle cx="210" cy="326" r="12" fill="#168AC0"/>
+  <circle cx="302" cy="326" r="12" fill="#168AC0"/>
+  <path d="M220 430h72" stroke="#17212B" stroke-width="18" stroke-linecap="round"/>
+</svg>
