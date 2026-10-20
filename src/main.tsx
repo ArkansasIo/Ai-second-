@@ -5,6 +5,7 @@ import './styles.css';
 type Workshop = { id: string; name: string; environment: string; agents: number };
 type UpdateInfo = { channel: string; version: string; status: 'current' | 'available' | 'error'; message: string };
 
+const APP_VERSION = '0.1.1';
 const workshops: Workshop[] = [
   { id: 'WORKSHOP-00001', name: 'C++ Core', environment: 'C++', agents: 4 },
   { id: 'WORKSHOP-00002', name: 'Android App', environment: 'Android', agents: 6 },
@@ -45,7 +46,7 @@ function App() {
   const [channel, setChannel] = useState(() => localStorage.getItem('ai-second-brain.channel') || 'gold');
   const [apiStatus, setApiStatus] = useState<'local' | 'offline'>('offline');
   const [busy, setBusy] = useState(false);
-  const [update, setUpdate] = useState<UpdateInfo>({ channel: 'gold', version: 'v0.1.0', status: 'current', message: 'You are on the Gold channel.' });
+  const [update, setUpdate] = useState<UpdateInfo>({ channel: 'gold', version: `v${APP_VERSION}`, status: 'current', message: 'You are on the Gold channel.' });
   const [checking, setChecking] = useState(false);
 
   useEffect(() => {
@@ -82,13 +83,13 @@ function App() {
       if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
       const releases = await response.json() as Array<{ tag_name: string; prerelease: boolean; draft: boolean; name?: string }>;
       const eligible = releases.find(release => !release.draft && (channel === 'gold' ? !release.prerelease : release.prerelease));
-      setUpdate(eligible ? { channel, version: eligible.tag_name, status: 'available', message: `${eligible.name || eligible.tag_name} is available for the ${channel} channel.` } : { channel, version: 'v0.1.0', status: 'current', message: `No published ${channel} update is available yet.` });
-    } catch (error) { setUpdate({ channel, version: 'v0.1.0', status: 'error', message: error instanceof Error ? `Update check unavailable: ${error.message}` : 'Update check unavailable.' }); }
+      setUpdate(eligible ? { channel, version: eligible.tag_name, status: 'available', message: `${eligible.name || eligible.tag_name} is available for the ${channel} channel.` } : { channel, version: `v${APP_VERSION}`, status: 'current', message: `No published ${channel} update is available yet.` });
+    } catch (error) { setUpdate({ channel, version: `v${APP_VERSION}`, status: 'error', message: error instanceof Error ? `Update check unavailable: ${error.message}` : 'Update check unavailable.' }); }
     finally { setChecking(false); }
   }
 
   return <div className="app">
-    <header className="topbar"><div className="brand">AI SECOND BRAIN <span>Professional</span></div><div className={apiStatus === 'local' ? 'status online' : 'status'}>● {apiStatus === 'local' ? `Ollama Local${model ? ` · ${model}` : ''}` : 'Local API Offline'}</div><div className="version">v0.1.0</div><button className="updateButton" onClick={checkForUpdates} disabled={checking}>{checking ? 'Checking…' : 'Check for Updates'}</button></header>
+    <header className="topbar"><div className="brand">AI SECOND BRAIN <span>Professional</span></div><div className={apiStatus === 'local' ? 'status online' : 'status'}>● {apiStatus === 'local' ? `Ollama Local${model ? ` · ${model}` : ''}` : 'Local API Offline'}</div><div className="version">v{APP_VERSION}</div><button className="updateButton" onClick={checkForUpdates} disabled={checking}>{checking ? 'Checking…' : 'Check for Updates'}</button></header>
     <div className="body"><aside className="sidebar"><button className="new">+ New Workshop</button>{nav.map(item => <button key={item} className={active === item ? 'nav active' : 'nav'} onClick={() => setActive(item)}>{item}</button>)}<div className="sidebarFoot">Account<br/>Settings</div></aside>
       <main className="workspace"><div className="workshopTabs">{workshops.map(w => <button key={w.id} className={w.id === workshop.id ? 'tab selected' : 'tab'} onClick={() => setWorkshop(w)}>{w.name}<small>{w.environment}</small></button>)}</div>
         <section className="hero"><div><div className="eyebrow">{active.toUpperCase()}</div><h1>{workshop.name}</h1><p>{workshop.id} · {workshop.environment} environment · {workshop.agents} agents</p></div><select value={model} onChange={e => setModel(e.target.value)} disabled={!models.length}><option value="">{models.length ? 'Select Ollama model' : 'Ollama model unavailable'}</option>{models.map(item => <option key={item} value={item}>{item}</option>)}</select></section>
