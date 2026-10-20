@@ -1,0 +1,30 @@
+@startuml
+actor CTO
+participant "Job Manager" as JM
+participant "Agent A" as A
+participant "Agent B" as B
+participant "Agent C" as C
+participant "Approval Gateway" as AG
+participant "Environment" as ENV
+
+CTO -> JM : createJob()
+JM -> JM : resolve dependencies
+CTO -> JM : runParallel()
+par independent task A
+  JM -> A : assign TASK-A
+  A -> ENV : execute
+  ENV --> A : result A
+and independent task B
+  JM -> B : assign TASK-B
+  B -> AG : request privileged tool
+  AG --> B : approved
+  B -> ENV : execute
+  ENV --> B : result B
+and independent task C
+  JM -> C : assign TASK-C
+  C -> ENV : execute
+  ENV --> C : result C
+end
+JM -> JM : collect results
+JM --> CTO : aggregate job result
+@enduml
