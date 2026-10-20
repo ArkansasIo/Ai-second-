@@ -1,0 +1,50 @@
+{
+  "presets": [
+    {
+      "id": "android-apk",
+      "name": "Android APK",
+      "platform": "android",
+      "hostRequirements": ["android-sdk", "android-build-tools", "jdk", "gradle"],
+      "toolchain": { "languages": ["kotlin", "java", "cpp"], "sdk": "Android SDK", "compiler": "Gradle/Javac", "buildSystem": "Gradle" },
+      "capabilities": ["android-build", "apk", "aab", "unit-test", "lint", "adb"]
+    },
+    {
+      "id": "ios-app",
+      "name": "iOS / iPadOS App",
+      "platform": "ios",
+      "hostRequirements": ["macos", "xcode", "ios-sdk"],
+      "toolchain": { "languages": ["swift", "objective-c", "cpp"], "sdk": "iOS SDK", "compiler": "Apple Clang/Swift", "buildSystem": "xcodebuild" },
+      "capabilities": ["ios-build", "ipados-build", "simulator-test", "archive", "ipa"]
+    },
+    {
+      "id": "unreal-engine",
+      "name": "Unreal Engine",
+      "platform": "windows",
+      "hostRequirements": ["unreal-engine", "visual-studio-or-clang"],
+      "toolchain": { "languages": ["cpp", "blueprint"], "compiler": "MSVC/Clang", "buildSystem": "UnrealBuildTool", "engine": "Unreal Engine 5.x" },
+      "capabilities": ["ue-build", "plugin-build", "cook", "package", "automation-tests"]
+    },
+    {
+      "id": "godot-engine",
+      "name": "Godot Engine",
+      "platform": "windows",
+      "hostRequirements": ["godot"],
+      "toolchain": { "languages": ["gdscript", "cpp", "csharp"], "engine": "Godot 4.x" },
+      "capabilities": ["godot-build", "editor-plugin", "export", "unit-test"]
+    },
+    {
+      "id": "cpp-core",
+      "name": "Universal C++ Core",
+      "platform": "windows",
+      "toolchain": { "languages": ["cpp", "c"], "compiler": "MSVC/Clang/GCC", "buildSystem": "CMake" },
+      "capabilities": ["compile", "test", "package", "static-analysis"]
+    },
+    {
+      "id": "web-typescript",
+      "name": "Web TypeScript",
+      "platform": "browser",
+      "toolchain": { "languages": ["typescript", "javascript"], "compiler": "TypeScript", "buildSystem": "Vite/npm" },
+      "capabilities": ["web-build", "test", "lint", "preview"]
+    }
+  ]
+}
