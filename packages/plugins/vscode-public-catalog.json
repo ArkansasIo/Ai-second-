@@ -1,0 +1,55 @@
+{
+  "catalogVersion": "1.0.0",
+  "policy": {
+    "publicOnly": true,
+    "licenseReviewRequired": true,
+    "installRequiresApproval": true,
+    "defaultScope": "workshop"
+  },
+  "extensions": [
+    {
+      "id": "golang.go",
+      "name": "Go",
+      "category": "language",
+      "license": "MIT",
+      "features": ["IntelliSense", "code-navigation", "code-editing", "diagnostics", "testing", "debugging", "formatting", "terminal-integration"],
+      "source": "https://marketplace.visualstudio.com/items?itemName=golang.go"
+    },
+    {
+      "id": "formulahendry.CodeRunner",
+      "name": "Code Runner",
+      "category": "execution",
+      "license": "MIT",
+      "features": ["run-file", "run-selection", "Go", "Python", "JavaScript", "Ruby", "PowerShell", "terminal-output"],
+      "source": "https://marketplace.visualstudio.com/items?itemName=formulahendry.CodeRunner"
+    },
+    {
+      "id": "hedzr.go-main-runner",
+      "name": "Go Main Runner",
+      "category": "execution-debugging",
+      "features": ["run-main", "debug-main", "terminal", "launch-configs"],
+      "source": "https://marketplace.visualstudio.com/items?itemName=hedzr.go-main-runner"
+    },
+    {
+      "id": "doggy8088.go-extension-pack",
+      "name": "Go Extension Pack",
+      "category": "extension-pack",
+      "features": ["Go-tooling", "Code-Runner", "testing", "snippets", "formatting"],
+      "source": "https://marketplace.visualstudio.com/items?itemName=doggy8088.go-extension-pack"
+    },
+    {
+      "id": "shivamkumar.go-extras",
+      "name": "Go Extras",
+      "category": "navigation",
+      "features": ["references", "peek-view", "selection-filtering"],
+      "source": "https://marketplace.visualstudio.com/items?itemName=shivamkumar.go-extras"
+    },
+    {
+      "id": "eamodio.gitlens",
+      "name": "GitLens",
+      "category": "source-control",
+      "features": ["Git-history", "blame", "code-lens", "repository-navigation"],
+      "source": "https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens"
+    }
+  ]
+}
