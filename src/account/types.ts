@@ -1,0 +1,7 @@
+export type AccountRole = 'owner' | 'admin' | 'developer' | 'viewer';
+export type ThemeMode = 'system' | 'light' | 'dark';
+export type Density = 'comfortable' | 'compact';
+export interface AccountProfile { id:string; username:string; displayName:string; email:string; avatarUrl?:string; role:AccountRole; title?:string; bio?:string; timezone:string; locale:string; createdAt:string; updatedAt:string; }
+export interface AccountSettings { theme:ThemeMode; density:Density; reducedMotion:boolean; notifications:boolean; desktopNotifications:boolean; soundEffects:boolean; voiceEnabled:boolean; autoSave:boolean; autoSync:boolean; telemetry:boolean; offlineMode:boolean; lanAccess:boolean; apiBaseUrl:string; defaultModel:string; updateChannel:'pre-alpha'|'alpha'|'pre-beta'|'beta'|'gold'; }
+export interface AccountState { authenticated:boolean; profile:AccountProfile; settings:AccountSettings; }
+export const DEFAULT_ACCOUNT:AccountState={authenticated:false,profile:{id:'USER-00001',username:'local-user',displayName:'Local User',email:'',role:'owner',timezone:'America/Toronto',locale:'en-CA',createdAt:new Date(0).toISOString(),updatedAt:new Date(0).toISOString()},settings:{theme:'system',density:'comfortable',reducedMotion:false,notifications:true,desktopNotifications:true,soundEffects:true,voiceEnabled:true,autoSave:true,autoSync:true,telemetry:false,offlineMode:false,lanAccess:false,apiBaseUrl:'http://127.0.0.1:8787',defaultModel:'qwen3',updateChannel:'gold'}};
