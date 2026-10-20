@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 
 type Workshop = { id: string; name: string; environment: string; agents: number };
+type BrowserTab = { id: string; title: string; url: string; icon: string };
 type UpdateInfo = { channel: string; version: string; status: 'current' | 'available' | 'error'; message: string };
 
 const APP_VERSION = '0.1.1';
@@ -14,6 +15,11 @@ const workshops: Workshop[] = [
 ];
 const nav = ['Projects', 'Issues', 'Code', 'Pull Requests', 'Agents', 'Actions', 'Roadmaps', 'Security', 'Insights', 'Releases', 'Environments', 'Blueprints', 'Extensions', 'Terminal', 'Memory', 'GitHub'];
 const releaseChannels = ['pre-alpha', 'alpha', 'pre-beta', 'beta', 'gold'];
+const initialBrowserTabs: BrowserTab[] = [
+  { id: 'TAB-00001', title: 'AI Second Brain', url: 'secondbrain://workspace', icon: '⌂' },
+  { id: 'TAB-00002', title: 'GitHub', url: 'https://github.com', icon: 'G' },
+  { id: 'TAB-00003', title: 'Ollama', url: 'http://127.0.0.1:11434', icon: 'O' }
+];
 
 function apiBase(): string {
   return (window.localStorage.getItem('ai-second-brain.apiBase') || 'http://127.0.0.1:8787').replace(/\/$/, '');
@@ -48,6 +54,8 @@ function App() {
   const [busy, setBusy] = useState(false);
   const [update, setUpdate] = useState<UpdateInfo>({ channel: 'gold', version: `v${APP_VERSION}`, status: 'current', message: 'You are on the Gold channel.' });
   const [checking, setChecking] = useState(false);
+  const [browserTabs, setBrowserTabs] = useState<BrowserTab[]>(initialBrowserTabs);
+  const [activeBrowserTab, setActiveBrowserTab] = useState('TAB-00001');
 
   useEffect(() => {
     localStorage.setItem('ai-second-brain.channel', channel);
@@ -88,29 +96,33 @@ function App() {
     finally { setChecking(false); }
   }
 
-  const content = {
-    Projects: ['Projects', 'Your local projects and workspaces.'],
-    Issues: ['Issues', 'Track bugs, tasks, priorities, and agent assignments.'],
-    Code: ['Code', 'Repository files, branches, worktrees, and source changes.'],
-    'Pull Requests': ['Pull Requests', 'Review proposed changes before merging.'],
-    Agents: ['Agents', 'Manage agent roles, models, permissions, and status.'],
-    Actions: ['Actions', 'Build, test, package, and automation workflows.'],
-    Roadmaps: ['Roadmaps', 'Plan milestones, deadlines, dependencies, and releases.'],
-    Security: ['Security', 'Permissions, secrets, dependencies, and audit controls.'],
-    Insights: ['Insights', 'Project health, workload, builds, tests, and resources.'],
-    Releases: ['Releases', 'Versioned packages, release notes, checksums, and channels.'],
-    Environments: ['Environments', 'Virtual development environments and toolchains.'],
-    Blueprints: ['Blueprints', 'Visual programs and language-specific code generation.'],
-    Extensions: ['Extensions', 'Installed IDE and application integrations.'],
-    Terminal: ['Terminal', 'Command sessions for the active workshop environment.'],
-    Memory: ['Memory', 'Project knowledge, conversations, and long-term context.'],
-    GitHub: ['GitHub', 'Repository, issues, pull requests, actions, and release integration.']
-  } as Record<string, [string, string]>;
+  function openBrowserTab() {
+    const id = `TAB-${String(browserTabs.length + 1).padStart(5, '0')}`;
+    const tab: BrowserTab = { id, title: 'New Tab', url: 'https://', icon: '+' };
+    setBrowserTabs(current => [...current, tab]);
+    setActiveBrowserTab(id);
+  }
 
+  function closeBrowserTab(id: string) {
+    if (browserTabs.length === 1) return;
+    const remaining = browserTabs.filter(tab => tab.id !== id);
+    setBrowserTabs(remaining);
+    if (activeBrowserTab === id) setActiveBrowserTab(remaining[Math.max(0, remaining.length - 1)].id);
+  }
+
+  function navigateBrowserTab(url: string) {
+    setBrowserTabs(current => current.map(tab => tab.id === activeBrowserTab ? { ...tab, url, title: url.replace(/^https?:\/\//, '').replace(/\/$/, '') || 'New Tab' } : tab));
+  }
+
+  const content = {
+    Projects: ['Projects', 'Your local projects and workspaces.'], Issues: ['Issues', 'Track bugs, tasks, priorities, and agent assignments.'], Code: ['Code', 'Repository files, branches, worktrees, and source changes.'], 'Pull Requests': ['Pull Requests', 'Review proposed changes before merging.'], Agents: ['Agents', 'Manage agent roles, models, permissions, and status.'], Actions: ['Actions', 'Build, test, package, and automation workflows.'], Roadmaps: ['Roadmaps', 'Plan milestones, deadlines, dependencies, and releases.'], Security: ['Security', 'Permissions, secrets, dependencies, and audit controls.'], Insights: ['Insights', 'Project health, workload, builds, tests, and resources.'], Releases: ['Releases', 'Versioned packages, release notes, checksums, and channels.'], Environments: ['Environments', 'Virtual development environments and toolchains.'], Blueprints: ['Blueprints', 'Visual programs and language-specific code generation.'], Extensions: ['Extensions', 'Installed IDE and application integrations.'], Terminal: ['Terminal', 'Command sessions for the active workshop environment.'], Memory: ['Memory', 'Project knowledge, conversations, and long-term context.'], GitHub: ['GitHub', 'Repository, issues, pull requests, actions, and release integration.']
+  } as Record<string, [string, string]>;
   const section = content[active] || content.Projects;
+  const currentBrowserTab = browserTabs.find(tab => tab.id === activeBrowserTab) || browserTabs[0];
 
   return <div className="app">
     <header className="topbar"><div className="brand">AI SECOND BRAIN <span>Professional</span></div><div className={apiStatus === 'local' ? 'status online' : 'status'}>● {apiStatus === 'local' ? `Ollama Local${model ? ` · ${model}` : ''}` : 'Local API Offline'}</div><div className="version">v{APP_VERSION}</div><button className="updateButton" onClick={checkForUpdates} disabled={checking}>{checking ? 'Checking…' : 'Check for Updates'}</button></header>
+    <div className="browserBar"><button className="browserControl" onClick={() => window.history.back()} aria-label="Back">←</button><button className="browserControl" onClick={() => window.history.forward()} aria-label="Forward">→</button><button className="browserControl" onClick={() => window.location.reload()} aria-label="Reload">↻</button><div className="browserTabs">{browserTabs.map(tab => <button key={tab.id} className={tab.id === activeBrowserTab ? 'browserTab selected' : 'browserTab'} onClick={() => setActiveBrowserTab(tab.id)}><span>{tab.icon}</span>{tab.title}<b onClick={event => { event.stopPropagation(); closeBrowserTab(tab.id); }}>×</b></button>)}<button className="browserNew" onClick={openBrowserTab}>+</button></div><input className="addressBar" value={currentBrowserTab.url} onChange={event => navigateBrowserTab(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') navigateBrowserTab(event.currentTarget.value); }} aria-label="Address bar" /></div>
     <div className="body"><aside className="sidebar"><button className="new" onClick={() => setActive('Projects')}>+ New Workshop</button>{nav.map(item => <button key={item} className={active === item ? 'nav active' : 'nav'} onClick={() => setActive(item)}>{item}</button>)}<div className="sidebarFoot"><button className="nav" onClick={() => setActive('GitHub')}>Account</button><button className="nav" onClick={() => setActive('Security')}>Settings</button></div></aside>
       <main className="workspace"><div className="workshopTabs">{workshops.map(w => <button key={w.id} className={w.id === workshop.id ? 'tab selected' : 'tab'} onClick={() => setWorkshop(w)}>{w.name}<small>{w.environment}</small></button>)}</div>
         <section className="hero"><div><div className="eyebrow">{active.toUpperCase()}</div><h1>{active === 'Projects' ? workshop.name : section[0]}</h1><p>{active === 'Projects' ? `${workshop.id} · ${workshop.environment} environment · ${workshop.agents} agents` : section[1]}</p></div><select value={model} onChange={e => setModel(e.target.value)} disabled={!models.length}><option value="">{models.length ? 'Select Ollama model' : 'Ollama model unavailable'}</option>{models.map(item => <option key={item} value={item}>{item}</option>)}</select></section>
