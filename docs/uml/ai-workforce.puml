@@ -1,0 +1,23 @@
+@startuml
+skinparam monochrome true
+actor User
+rectangle "AI Second Brain" {
+  component "CTO Agent" as CTO
+  component "Agent Workforce" as Workforce
+  component "Job Manager" as Jobs
+  component "Approval Gateway" as Approval
+  component "API Tool Registry" as Tools
+  component "Virtual Environment" as Env
+  database "Memory / Artifacts" as Store
+}
+User --> CTO : chat / command
+CTO --> Workforce : delegate
+Workforce --> Jobs : create / assign jobs
+Jobs --> Env : execute isolated work
+Workforce --> Tools : request tool
+Tools --> Approval : check policy
+Approval --> Tools : allow / deny
+Tools --> Env : execute API action
+Jobs --> Store : logs / artifacts
+Workforce --> Store : memory / results
+@enduml
