@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Second Brain Catalog",
+  "type": "object",
+  "required": ["catalogVersion", "models", "voices", "agents", "presets", "clusters"],
+  "properties": {
+    "catalogVersion": {"type": "string"},
+    "models": {"type": "array", "items": {"$ref": "#/$defs/model"}},
+    "voices": {"type": "array", "items": {"$ref": "#/$defs/voice"}},
+    "agents": {"type": "array", "items": {"$ref": "#/$defs/agent"}},
+    "presets": {"type": "array", "maxItems": 5000, "items": {"$ref": "#/$defs/preset"}},
+    "clusters": {"type": "array", "items": {"$ref": "#/$defs/cluster"}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Z]+-[0-9]{5}$"},
+    "model": {"type": "object", "required": ["id", "name", "provider"], "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string"}, "provider": {"type": "string"}, "modelName": {"type": "string"}}},
+    "voice": {"type": "object", "required": ["id", "name", "gender"], "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string"}, "gender": {"type": "string"}, "provider": {"type": "string"}, "language": {"type": "string"}, "style": {"type": "string"}}},
+    "agent": {"type": "object", "required": ["id", "name", "role"], "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string"}, "role": {"type": "string"}, "modelId": {"type": "string"}, "voiceId": {"type": "string"}}},
+    "preset": {"type": "object", "required": ["id", "name", "modelId", "voiceId"], "properties": {"id": {"type": "string", "pattern": "^PRESET-[0-9]{5}$"}, "name": {"type": "string"}, "modelId": {"type": "string"}, "voiceId": {"type": "string"}, "personality": {"type": "string"}, "speakingStyle": {"type": "string"}, "temperature": {"type": "number", "minimum": 0, "maximum": 2}}},
+    "cluster": {"type": "object", "required": ["id", "name"], "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string"}, "agentIds": {"type": "array", "items": {"type": "string"}}}}
+  }
+}
