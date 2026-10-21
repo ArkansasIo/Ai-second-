@@ -4,7 +4,11 @@ AI Second Brain uses GitHub Pages as the free browser-based test/demo package.
 
 ## Deployment
 
-The `ci.yml` workflow builds the Vite application and deploys `dist/` to GitHub Pages from `main`.
+The dedicated `.github/workflows/pages.yml` workflow builds the Vite application and deploys the generated `dist/` directory to GitHub Pages from `main`. The workflow validates that the version in `package.json` and `VERSION` matches its configured release version before building.
+
+The `.github/workflows/ci.yml` workflow is separate: it installs dependencies, verifies version consistency, builds the app, and runs tests for pushes and pull requests. It does not deploy Pages, so CI and deployment responsibilities remain independent.
+
+In repository settings, configure **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
 ## Browser mode
 
