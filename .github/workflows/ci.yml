@@ -1,35 +1,36 @@
 name: AI Second Brain CI
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
-  pages: write
-  id-token: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
-      - run: npm run build
-      - run: npm test
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-  deploy-pages:
-    if: github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Verify release version
+        run: |
+          node -e "const p=require('./package.json'); const fs=require('node:fs'); const v=fs.readFileSync('VERSION','utf8').trim(); if(p.version!==v) throw new Error('Version mismatch: package.json='+p.version+' VERSION='+v); console.log('Verified version '+v);"
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
